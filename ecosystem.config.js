@@ -20,7 +20,7 @@ module.exports = {
       script: 'npm',
       args: 'run preview',
       env: {
-        PORT: 4182,
+        PORT: 4183,
         NODE_ENV: 'production',
         HOST: '0.0.0.0'
       },
