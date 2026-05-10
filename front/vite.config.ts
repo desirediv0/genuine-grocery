@@ -13,7 +13,7 @@ export default defineConfig({
   },
   // Add the preview configuration for production builds
   preview: {
-    port: 4182,
+    port: 4183,
     host: "0.0.0.0",
     allowedHosts: [
       "admin.genuinegrocery.in",
