@@ -102,7 +102,7 @@ export const WhyBuySection = () => {
           <div className="relative z-10 max-w-xl text-center md:text-left">
             <h3 className="text-2xl md:text-3xl font-bold mb-3">Need a Custom Plan?</h3>
             <p className="text-gray-400">
-              Whether it's for your home or your business, our experts are help you choose the best products for your needs.
+              Whether its for your home or your business, our experts are help you choose the best products for your needs.
             </p>
           </div>
           <div className="relative z-10 flex flex-col sm:flex-row gap-4">
