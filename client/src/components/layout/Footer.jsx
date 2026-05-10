@@ -1,0 +1,232 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Mail, MapPin, Phone, Instagram, Facebook, Youtube, ArrowUpRight } from "lucide-react";
+import { fetchApi } from "@/lib/utils";
+
+/* ─────────────────────────────────────────────
+   CONSTANTS
+───────────────────────────────────────────── */
+const PARTNER_PORTAL_URL = process.env.NEXT_PUBLIC_PARTNER_URL || "https://partner.genuinegrocery.com/login";
+
+const COMPANY_LINKS = [
+  { label: "About Us",        href: "/about"           },
+  { label: "Contact",         href: "/contact"         },
+  { label: "Shipping Policy", href: "/shipping-policy" },
+  { label: "Return Policy",   href: "/return-policy"   },
+  { label: "FAQs",            href: "/faqs"            },
+];
+
+const SOCIALS = [
+  { name: "Instagram", href: "https://www.instagram.com/official_GenuineGrocery/", icon: Instagram },
+  { name: "Facebook",  href: "https://www.facebook.com/share/1DCsKYB5Uy/?mibextid=wwXIfr", icon: Facebook  },
+  { name: "YouTube",   href: "https://youtube.com/@GenuineGroceryindia?si=ZkkCpU1DEh48NBSe", icon: Youtube   },
+];
+
+/* ─────────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────────── */
+export const Footer = () => {
+  const [categories, setCategories] = useState([]);
+  const [loadingCats, setLoadingCats] = useState(true);
+
+  useEffect(() => {
+    fetchApi("/public/categories")
+      .then((res) => setCategories((res.data?.categories || []).slice(0, 8)))
+      .catch(console.error)
+      .finally(() => setLoadingCats(false));
+  }, []);
+
+  return (
+    <footer
+      className="text-slate-200"
+      style={{ background: "linear-gradient(160deg, #1e2d40 0%, #172234 60%, #111c2b 100%)" }}
+    >
+
+      {/* ── Top accent line ── */}
+      <div className="h-0.5 w-full" style={{ background: "linear-gradient(90deg, transparent, #16A34A 40%, #1D4ED8 60%, transparent)" }} />
+
+      {/* ── Main grid ── */}
+      <div className="max-w-6xl mx-auto px-5 pt-16 pb-12">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-x-8 gap-y-12">
+
+          {/* ── Brand col (spans 2) ── */}
+          <div className="col-span-2">
+            <Link href="/" className="inline-flex items-center gap-2 mb-6">
+              <Image
+                src="/logo.png"
+                alt="Genuine Grocery"
+                width={130}
+                height={52}
+                className="h-16 w-auto rounded"
+              />
+          
+            </Link>
+
+            <p className="text-sm text-slate-400 leading-relaxed mb-7 max-w-[260px]">
+              Premium nutritional products sourced from local farms and delivered to your doorstep since 2009. Pure. Fresh. Local.
+            </p>
+
+            {/* Contact details */}
+            <ul className="space-y-3 mb-7">
+              <li>
+                <a
+                  href="mailto:connect.genuinenutrition@gmail.com"
+                  className="flex items-center gap-2.5 text-sm text-slate-400 hover:text-primary transition-colors group"
+                >
+                  <span className="w-7 h-7 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+                    <Mail className="h-3.5 w-3.5 text-primary" />
+                  </span>
+                  connect.genuinenutrition@gmail.com
+                </a>
+              </li>
+              <li>
+                <a
+                  href="tel:+919582855132"
+                  className="flex items-center gap-2.5 text-sm text-slate-400 hover:text-primary transition-colors group"
+                >
+                  <span className="w-7 h-7 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+                    <Phone className="h-3.5 w-3.5 text-primary" />
+                  </span>
+                  +91 95828 55132
+                </a>
+              </li>
+              <li>
+                <div className="flex items-start gap-2.5 text-sm text-slate-400">
+                  <span className="w-7 h-7 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <MapPin className="h-3.5 w-3.5 text-primary" />
+                  </span>
+                  <span>89/2 Sector 39, Gurugram, Haryana</span>
+                </div>
+              </li>
+            </ul>
+
+            {/* Social icons */}
+            <div className="flex gap-2.5">
+              {SOCIALS.map((s) => (
+                <a
+                  key={s.name}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.name}
+                  className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 hover:bg-primary/20 hover:border-primary/40 flex items-center justify-center transition-all duration-200 group"
+                >
+                  <s.icon className="h-4 w-4 text-slate-400 group-hover:text-primary" />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Shop col ── */}
+          <div className="col-span-1 md:col-span-2">
+            <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-primary/70 mb-5">
+              Shop
+            </p>
+            <ul className="space-y-3">
+              {loadingCats ? (
+                [1,2,3,4].map((i) => (
+                  <li key={i} className="h-4 rounded-md bg-white/5 animate-pulse" style={{ width: `${60 + i * 15}px` }} />
+                ))
+              ) : categories.length > 0 ? (
+                <>
+                  {categories.map((cat) => (
+                    <li key={cat.id}>
+                      <Link
+                        href={`/category/${cat.slug}`}
+                        className="text-sm text-slate-400 hover:text-white transition-colors"
+                      >
+                        {cat.name}
+                      </Link>
+                    </li>
+                  ))}
+                  <li className="pt-1">
+                    <Link
+                      href="/categories"
+                      className="inline-flex items-center gap-1 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+                    >
+                      All categories <ArrowUpRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <li>
+                  <Link href="/products" className="text-sm text-slate-400 hover:text-white transition-colors">
+                    All Products
+                  </Link>
+                </li>
+              )}
+            </ul>
+          </div>
+
+          {/* ── Company col ── */}
+          <div className="col-span-1">
+            <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-primary/70 mb-5">
+              Company
+            </p>
+            <ul className="space-y-3">
+              {COMPANY_LINKS.map((l) => (
+                <li key={l.href}>
+                  <Link
+                    href={l.href}
+                    className="text-sm text-slate-400 hover:text-white transition-colors"
+                  >
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* ── Partner col ── */}
+          <div className="col-span-1">
+            <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-primary/70 mb-5">
+            We accept
+            </p>
+            
+
+            {/* Payment methods */}
+            <div className="mt-8">
+             
+              <div className="flex flex-wrap gap-2">
+                {["UPI", "Visa", "MC", "COD", "Net Banking"].map((m) => (
+                  <span
+                    key={m}
+                    className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] text-slate-400 font-semibold"
+                  >
+                    {m}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* ── Divider ── */}
+      <div className="border-t border-white/8" />
+
+      {/* ── Bottom bar ── */}
+      <div className="max-w-6xl mx-auto px-5 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p className="text-xs text-slate-500">
+          © {new Date().getFullYear()} Genuine Grocery. All rights reserved.
+        </p>
+        <div className="flex items-center gap-5">
+          <Link href="/privacy-policy" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+            Privacy Policy
+          </Link>
+          <span className="text-slate-700 text-xs">·</span>
+          <Link href="/terms" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+            Terms of Use
+          </Link>
+        </div>
+      </div>
+
+    </footer>
+  );
+};
+
+export default Footer;
