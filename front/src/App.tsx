@@ -24,6 +24,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import ProductCreatePage from "./pages/ProductCreatePage";
+import BulkProductsPage from "./pages/BulkProductsPage";
 import { useAuth } from "./context/AuthContext";
 import { Resource, Action } from "./types/admin";
 import { PermissionGuard } from "./components/PermissionGuard";
@@ -166,6 +167,18 @@ const App = () => {
                   action={Action.CREATE}
                 >
                   <ProductCreatePage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="products/bulk"
+              element={
+                <ProtectedRoute
+                  resource={Resource.PRODUCTS}
+                  action={Action.CREATE}
+                >
+                  <BulkProductsPage />
                 </ProtectedRoute>
               }
             />

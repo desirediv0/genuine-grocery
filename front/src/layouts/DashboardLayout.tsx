@@ -25,6 +25,7 @@ import {
   Layers,
   Eye,
   Truck,
+  // Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SafeRender } from "@/components/SafeRender";
@@ -375,6 +376,16 @@ export default function DashboardLayout() {
                       Action.CREATE
                     ),
                   },
+                  // {
+                  //   href: "/products/bulk",
+                  //   title: t("nav.bulk_products"),
+                  //   icon: <Upload className="h-3 w-3" />,
+                  //   hasPermission: hasPermissionFor(
+                  //     admin,
+                  //     Resource.PRODUCTS,
+                  //     Action.CREATE
+                  //   ),
+                  // },
                   {
                     href: "/brands",
                     title: t("nav.brands"),
@@ -744,6 +755,16 @@ export default function DashboardLayout() {
                       Action.CREATE
                     ),
                   },
+                  // {
+                  //   href: "/products/bulk",
+                  //   title: t("nav.bulk_products"),
+                  //   icon: <Upload className="h-3 w-3" />,
+                  //   hasPermission: hasPermissionFor(
+                  //     admin,
+                  //     Resource.PRODUCTS,
+                  //     Action.CREATE
+                  //   ),
+                  // },
                   {
                     href: "/brands",
                     title: t("nav.brands"),
