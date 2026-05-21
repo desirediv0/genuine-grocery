@@ -11,6 +11,35 @@ import {
   formatVariantsWithAttributes,
 } from "../utils/variant-attributes.js";
 
+const stripHtmlToPlain = (value = "", maxLength = 160) => {
+  const plain = String(value)
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (plain.length <= maxLength) return plain;
+  return `${plain.substring(0, maxLength)}...`;
+};
+
+const buildProductSeo = (name, description, metaTitle, metaDescription) => {
+  const cleanName = String(name || "").trim();
+  const plainDescription = stripHtmlToPlain(description);
+
+  return {
+    metaTitle: metaTitle && metaTitle.trim() ? metaTitle.trim() : cleanName,
+    metaDescription:
+      metaDescription && metaDescription.trim()
+        ? metaDescription.trim()
+        : plainDescription || `Buy ${cleanName} online at Genuine Grocery.`,
+  };
+};
+
 // Get products by type (featured, bestseller, trending, new, etc.)
 export const getProductsByType = asyncHandler(async (req, res, next) => {
   const { productType } = req.params;
@@ -473,6 +502,12 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 
   // Generate slug from name
   const slug = createSlug(cleanName);
+  const seo = buildProductSeo(
+    cleanName,
+    description,
+    metaTitle,
+    metaDescription
+  );
 
   // Check if slug already exists
   const existingProduct = await prisma.product.findUnique({
@@ -520,8 +555,8 @@ export const createProduct = asyncHandler(async (req, res, next) => {
           featured: featured === "true" || featured === true,
           productType: parsedProductType,
           isActive: isActive === "true" || isActive === true || true,
-          metaTitle: metaTitle || cleanName,
-          metaDescription: metaDescription || description,
+          metaTitle: seo.metaTitle,
+          metaDescription: seo.metaDescription,
           keywords,
           tags: req.body.tags
             ? Array.isArray(req.body.tags)

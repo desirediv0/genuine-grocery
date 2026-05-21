@@ -368,7 +368,10 @@ export async function resolveAttributeValueId(
     const res = await attributeValues.createAttributeValue(attr.id, {
       value: value.trim(),
     });
-    const created = res.data?.data?.attributeValue;
+    const created = res.data?.data?.attributeValue || res.data?.data?.value;
+    if (!created?.id) {
+      throw new Error(`Failed to resolve attribute value: ${attributeName} - ${value}`);
+    }
     attrValue = { id: created.id, value: created.value };
     attr.values.push(attrValue);
   }
@@ -427,7 +430,9 @@ export async function submitBulkProduct(
     productTypes.push("featured");
   }
 
-  const plainMeta = stripHtmlToPlain(row.description, 160);
+  const plainDescription = stripHtmlToPlain(row.description, 160);
+  const metaDescription =
+    plainDescription || `Buy ${row.name.trim()} online at Genuine Grocery.`;
 
   const formData = new FormData();
   formData.append("name", row.name.trim());
@@ -440,7 +445,7 @@ export async function submitBulkProduct(
   formData.append("isActive", String(row.isActive));
   formData.append("hasVariants", String(row.hasVariants));
   formData.append("metaTitle", row.name.trim());
-  formData.append("metaDescription", plainMeta);
+  formData.append("metaDescription", metaDescription);
   formData.append("keywords", "");
   formData.append("tags", JSON.stringify([]));
   formData.append("topBrandIds", JSON.stringify([]));
