@@ -595,134 +595,156 @@ export default function BulkProductRowCard({
                         </Badge>
                       ))}
                     </div>
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder={t("bulk_products.add_value")}
-                        value={newAttrValue[attrIdx] || ""}
-                        onChange={(e) =>
-                          setNewAttrValue({ ...newAttrValue, [attrIdx]: e.target.value })
-                        }
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            const val = (newAttrValue[attrIdx] || "").trim();
-                            if (val && !attr.values.includes(val)) {
-                              const configs = [...row.attributeConfigs];
-                              configs[attrIdx] = {
-                                ...configs[attrIdx],
-                                values: [...configs[attrIdx].values, val],
-                              };
-                              onChange({ ...row, attributeConfigs: configs });
-                              setNewAttrValue({ ...newAttrValue, [attrIdx]: "" });
-                            }
-                          }
-                        }}
-                        className="h-8 text-sm flex-1"
-                      />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 pt-3 border-t border-gray-100">
                       {(() => {
                         const existingAttr = allAttributes?.find((a) => a.name.toLowerCase() === attr.name.toLowerCase());
                         if (existingAttr && existingAttr.values && existingAttr.values.length > 0) {
                           return (
-                            <select
-                              className="h-8 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                              onChange={(e) => {
-                                if (e.target.value) {
-                                  const val = e.target.value;
-                                  if (!attr.values.includes(val)) {
-                                    const configs = [...row.attributeConfigs];
-                                    configs[attrIdx] = {
-                                      ...configs[attrIdx],
-                                      values: [...configs[attrIdx].values, val],
-                                    };
-                                    onChange({ ...row, attributeConfigs: configs });
+                            <div className="flex flex-col gap-1.5">
+                              <Label className="text-xs text-muted-foreground">Select existing value</Label>
+                              <select
+                                className="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                                onChange={(e) => {
+                                  if (e.target.value) {
+                                    const val = e.target.value;
+                                    if (!attr.values.includes(val)) {
+                                      const configs = [...row.attributeConfigs];
+                                      configs[attrIdx] = {
+                                        ...configs[attrIdx],
+                                        values: [...configs[attrIdx].values, val],
+                                      };
+                                      onChange({ ...row, attributeConfigs: configs });
+                                    }
+                                    e.target.value = "";
                                   }
-                                  e.target.value = "";
-                                }
-                              }}
-                            >
-                              <option value="">{t("bulk_products.select_value") || "Select Value"}</option>
-                              {existingAttr.values.map((v) => (
-                                <option key={v.id} value={v.value}>
-                                  {v.value}
-                                </option>
-                              ))}
-                            </select>
+                                }}
+                              >
+                                <option value="" disabled selected>Choose a value...</option>
+                                {existingAttr.values.map((v) => (
+                                  <option key={v.id} value={v.value}>
+                                    {v.value}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
                           );
                         }
                         return null;
                       })()}
+                      
+                      <div className="flex flex-col gap-1.5">
+                        <Label className="text-xs text-muted-foreground">Or type new value & press Enter</Label>
+                        <Input
+                          placeholder="Type custom value..."
+                          value={newAttrValue[attrIdx] || ""}
+                          onChange={(e) =>
+                            setNewAttrValue({ ...newAttrValue, [attrIdx]: e.target.value })
+                          }
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              const val = (newAttrValue[attrIdx] || "").trim();
+                              if (val && !attr.values.includes(val)) {
+                                const configs = [...row.attributeConfigs];
+                                configs[attrIdx] = {
+                                  ...configs[attrIdx],
+                                  values: [...configs[attrIdx].values, val],
+                                };
+                                onChange({ ...row, attributeConfigs: configs });
+                                setNewAttrValue({ ...newAttrValue, [attrIdx]: "" });
+                              }
+                            }
+                          }}
+                          className="h-9 text-sm w-full"
+                        />
+                      </div>
                     </div>
                   </Card>
                 ))}
-                <div className="flex gap-2">
-                  <Input
-                    placeholder={t("bulk_products.new_attribute")}
-                    value={newAttrName}
-                    onChange={(e) => setNewAttrName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        if (newAttrName.trim()) {
-                          if (!row.attributeConfigs.some(a => a.name.toLowerCase() === newAttrName.trim().toLowerCase())) {
-                            onChange({
-                              ...row,
-                              attributeConfigs: [
-                                ...row.attributeConfigs,
-                                { name: newAttrName.trim(), values: [] },
-                              ],
-                            });
+                <div className="mt-4 p-4 border rounded-md bg-white space-y-4 shadow-sm">
+                  <h4 className="text-sm font-medium text-gray-800">Add New Attribute</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Select Existing */}
+                    <div className="flex flex-col gap-2 md:border-r md:pr-6">
+                      <Label className="text-xs text-muted-foreground font-medium">1. Select from existing attributes</Label>
+                      <select
+                        className="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        onChange={(e) => {
+                          if (e.target.value) {
+                            const val = e.target.value;
+                            if (!row.attributeConfigs.some(a => a.name.toLowerCase() === val.toLowerCase())) {
+                              onChange({
+                                ...row,
+                                attributeConfigs: [
+                                  ...row.attributeConfigs,
+                                  { name: val, values: [] },
+                                ],
+                              });
+                            }
+                            e.target.value = "";
                           }
-                          setNewAttrName("");
-                        }
-                      }
-                    }}
-                    className="flex-1"
-                  />
-                  <select
-                    className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
-                    onChange={(e) => {
-                      if (e.target.value) {
-                        const val = e.target.value;
-                        if (!row.attributeConfigs.some(a => a.name.toLowerCase() === val.toLowerCase())) {
-                          onChange({
-                            ...row,
-                            attributeConfigs: [
-                              ...row.attributeConfigs,
-                              { name: val, values: [] },
-                            ],
-                          });
-                        }
-                        e.target.value = "";
-                      }
-                    }}
-                  >
-                    <option value="">{t("bulk_products.select_attribute") || "Select Attribute"}</option>
-                    {allAttributes?.map((attr) => (
-                      <option key={attr.id} value={attr.name}>
-                        {attr.name}
-                      </option>
-                    ))}
-                  </select>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      if (newAttrName.trim()) {
-                        if (!row.attributeConfigs.some(a => a.name.toLowerCase() === newAttrName.trim().toLowerCase())) {
-                          onChange({
-                            ...row,
-                            attributeConfigs: [
-                              ...row.attributeConfigs,
-                              { name: newAttrName.trim(), values: [] },
-                            ],
-                          });
-                        }
-                        setNewAttrName("");
-                      }
-                    }}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
+                        }}
+                      >
+                        <option value="" disabled selected>Choose attribute...</option>
+                        {allAttributes?.map((attr) => (
+                          <option key={attr.id} value={attr.name}>
+                            {attr.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Create Custom */}
+                    <div className="flex flex-col gap-2">
+                      <Label className="text-xs text-muted-foreground font-medium">2. Or create a custom attribute</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="e.g. Material, Pattern..."
+                          value={newAttrName}
+                          onChange={(e) => setNewAttrName(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              if (newAttrName.trim()) {
+                                if (!row.attributeConfigs.some(a => a.name.toLowerCase() === newAttrName.trim().toLowerCase())) {
+                                  onChange({
+                                    ...row,
+                                    attributeConfigs: [
+                                      ...row.attributeConfigs,
+                                      { name: newAttrName.trim(), values: [] },
+                                    ],
+                                  });
+                                }
+                                setNewAttrName("");
+                              }
+                            }
+                          }}
+                          className="flex-1 h-9"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="h-9 w-9 p-0 bg-gray-50"
+                          onClick={() => {
+                            if (newAttrName.trim()) {
+                              if (!row.attributeConfigs.some(a => a.name.toLowerCase() === newAttrName.trim().toLowerCase())) {
+                                onChange({
+                                  ...row,
+                                  attributeConfigs: [
+                                    ...row.attributeConfigs,
+                                    { name: newAttrName.trim(), values: [] },
+                                  ],
+                                });
+                              }
+                              setNewAttrName("");
+                            }
+                          }}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">
