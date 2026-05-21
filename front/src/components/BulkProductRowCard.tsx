@@ -180,6 +180,7 @@ interface BulkProductRowCardProps {
   row: BulkProductRow;
   index: number;
   allCategories: { id: string; name: string }[];
+  allAttributes?: { id: string; name: string; values: { id: string; value: string }[] }[];
   brandsList: { id: string; name: string }[];
   autoSku: boolean;
   onChange: (r: BulkProductRow) => void;
@@ -190,6 +191,7 @@ export default function BulkProductRowCard({
   row,
   index,
   allCategories,
+  allAttributes,
   brandsList,
   autoSku,
   onChange,
@@ -615,8 +617,40 @@ export default function BulkProductRowCard({
                             }
                           }
                         }}
-                        className="h-8 text-sm"
+                        className="h-8 text-sm flex-1"
                       />
+                      {(() => {
+                        const existingAttr = allAttributes?.find((a) => a.name.toLowerCase() === attr.name.toLowerCase());
+                        if (existingAttr && existingAttr.values && existingAttr.values.length > 0) {
+                          return (
+                            <select
+                              className="h-8 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                              onChange={(e) => {
+                                if (e.target.value) {
+                                  const val = e.target.value;
+                                  if (!attr.values.includes(val)) {
+                                    const configs = [...row.attributeConfigs];
+                                    configs[attrIdx] = {
+                                      ...configs[attrIdx],
+                                      values: [...configs[attrIdx].values, val],
+                                    };
+                                    onChange({ ...row, attributeConfigs: configs });
+                                  }
+                                  e.target.value = "";
+                                }
+                              }}
+                            >
+                              <option value="">{t("bulk_products.select_value") || "Select Value"}</option>
+                              {existingAttr.values.map((v) => (
+                                <option key={v.id} value={v.value}>
+                                  {v.value}
+                                </option>
+                              ))}
+                            </select>
+                          );
+                        }
+                        return null;
+                      })()}
                     </div>
                   </Card>
                 ))}
@@ -629,6 +663,52 @@ export default function BulkProductRowCard({
                       if (e.key === "Enter") {
                         e.preventDefault();
                         if (newAttrName.trim()) {
+                          if (!row.attributeConfigs.some(a => a.name.toLowerCase() === newAttrName.trim().toLowerCase())) {
+                            onChange({
+                              ...row,
+                              attributeConfigs: [
+                                ...row.attributeConfigs,
+                                { name: newAttrName.trim(), values: [] },
+                              ],
+                            });
+                          }
+                          setNewAttrName("");
+                        }
+                      }
+                    }}
+                    className="flex-1"
+                  />
+                  <select
+                    className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        const val = e.target.value;
+                        if (!row.attributeConfigs.some(a => a.name.toLowerCase() === val.toLowerCase())) {
+                          onChange({
+                            ...row,
+                            attributeConfigs: [
+                              ...row.attributeConfigs,
+                              { name: val, values: [] },
+                            ],
+                          });
+                        }
+                        e.target.value = "";
+                      }
+                    }}
+                  >
+                    <option value="">{t("bulk_products.select_attribute") || "Select Attribute"}</option>
+                    {allAttributes?.map((attr) => (
+                      <option key={attr.id} value={attr.name}>
+                        {attr.name}
+                      </option>
+                    ))}
+                  </select>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      if (newAttrName.trim()) {
+                        if (!row.attributeConfigs.some(a => a.name.toLowerCase() === newAttrName.trim().toLowerCase())) {
                           onChange({
                             ...row,
                             attributeConfigs: [
@@ -636,23 +716,7 @@ export default function BulkProductRowCard({
                               { name: newAttrName.trim(), values: [] },
                             ],
                           });
-                          setNewAttrName("");
                         }
-                      }
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      if (newAttrName.trim()) {
-                        onChange({
-                          ...row,
-                          attributeConfigs: [
-                            ...row.attributeConfigs,
-                            { name: newAttrName.trim(), values: [] },
-                          ],
-                        });
                         setNewAttrName("");
                       }
                     }}

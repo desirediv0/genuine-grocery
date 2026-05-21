@@ -279,6 +279,7 @@ export default function BulkProductsPage() {
           row={row}
           index={index}
           allCategories={allCategories}
+          allAttributes={allAttributes}
           brandsList={brandsList}
           autoSku={autoSku}
           onChange={(updated) => {
