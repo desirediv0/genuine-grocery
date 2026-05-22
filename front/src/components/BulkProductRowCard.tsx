@@ -180,6 +180,7 @@ interface BulkProductRowCardProps {
   row: BulkProductRow;
   index: number;
   allCategories: { id: string; name: string }[];
+  subCategoriesMap?: Record<string, { id: string; name: string }[]>;
   allAttributes?: { id: string; name: string; values: { id: string; value: string }[] }[];
   brandsList: { id: string; name: string }[];
   autoSku: boolean;
@@ -191,6 +192,7 @@ export default function BulkProductRowCard({
   row,
   index,
   allCategories,
+  subCategoriesMap = {},
   allAttributes,
   brandsList,
   autoSku,
@@ -416,6 +418,74 @@ export default function BulkProductRowCard({
                         ) : null;
                       })}
                     </select>
+                  </div>
+                )}
+
+                {/* Sub-categories for selected categories */}
+                {row.categoryIds.length > 0 && row.categoryIds.some((id) => (subCategoriesMap[id] || []).length > 0) && (
+                  <div className="mt-3">
+                    <Label className="text-xs text-muted-foreground">
+                      {t("products.form.categories.sub_categories_optional")}
+                    </Label>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      {t("products.form.categories.select_sub_categories_hint")}
+                    </p>
+                    <div className="border rounded-md p-3 max-h-36 overflow-y-auto space-y-3">
+                      {row.categoryIds.map((catId) => {
+                        const subs = subCategoriesMap[catId] || [];
+                        if (subs.length === 0) return null;
+                        const cat = allCategories.find((c) => c.id === catId);
+                        return (
+                          <div key={catId}>
+                            <p className="text-xs font-medium text-gray-600 mb-1">{cat?.name}</p>
+                            <div className="space-y-1 pl-2">
+                              {subs.map((sub) => (
+                                <label key={sub.id} className="flex items-center gap-2 cursor-pointer">
+                                  <Checkbox
+                                    checked={(row.subCategoryIds || []).includes(sub.id)}
+                                    onCheckedChange={(checked) => {
+                                      const current = row.subCategoryIds || [];
+                                      const next = checked
+                                        ? [...current, sub.id]
+                                        : current.filter((id) => id !== sub.id);
+                                      onChange({ ...row, subCategoryIds: next });
+                                    }}
+                                  />
+                                  <span className="text-sm">{sub.name}</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {(row.subCategoryIds || []).length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {(row.subCategoryIds || []).map((subId) => {
+                          let name = "";
+                          for (const subs of Object.values(subCategoriesMap)) {
+                            const found = subs.find((s) => s.id === subId);
+                            if (found) { name = found.name; break; }
+                          }
+                          return (
+                            <Badge key={subId} variant="secondary" className="gap-1 text-xs">
+                              {name}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  onChange({
+                                    ...row,
+                                    subCategoryIds: (row.subCategoryIds || []).filter((id) => id !== subId),
+                                  })
+                                }
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                            </Badge>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
 import { Resource, Action } from "@/types/admin";
-import { categories, attributes, brands } from "@/api/adminService";
+import { categories, attributes, brands, subCategories } from "@/api/adminService";
 import BulkProductsGuide from "@/components/BulkProductsGuide";
 import BulkProductRowCard from "@/components/BulkProductRowCard";
 import {
@@ -36,6 +36,7 @@ export default function BulkProductsPage() {
   const [allAttributes, setAllAttributes] = useState<
     { id: string; name: string; values: { id: string; value: string }[] }[]
   >([]);
+  const [subCategoriesMap, setSubCategoriesMap] = useState<Record<string, { id: string; name: string }[]>>({});
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const hasPermission =
@@ -44,14 +45,33 @@ export default function BulkProductsPage() {
 
   useEffect(() => {
     const load = async () => {
+      // Load categories
       try {
-        const [catRes, attrRes, brandRes] = await Promise.all([
-          categories.getCategories(),
-          attributes.getAttributes(),
-          brands.getBrands({ limit: 500 }),
-        ]);
-        const cats = catRes.data?.data?.categories || [];
-        setAllCategories(cats.map((c: { id: string; name: string }) => ({ id: c.id, name: c.name })));
+        const catRes = await categories.getCategories();
+        const cats: { id: string; name: string }[] = catRes.data?.data?.categories || [];
+        setAllCategories(cats.map((c) => ({ id: c.id, name: c.name })));
+
+        // Load subcategories for each category
+        const subMap: Record<string, { id: string; name: string }[]> = {};
+        await Promise.all(
+          cats.map(async (cat) => {
+            try {
+              const subRes = await subCategories.getSubCategoriesByCategory(cat.id);
+              const subs: { id: string; name: string }[] = subRes.data?.data?.subCategories || [];
+              if (subs.length > 0) subMap[cat.id] = subs;
+            } catch {
+              // subcategory load failure is non-critical
+            }
+          })
+        );
+        setSubCategoriesMap(subMap);
+      } catch {
+        toast.error(t("bulk_products.load_failed"));
+      }
+
+      // Load attributes
+      try {
+        const attrRes = await attributes.getAttributes();
         const attrs = attrRes.data?.data?.attributes || [];
         setAllAttributes(
           attrs.map((a: { id: string; name: string; values: { id: string; value: string }[] }) => ({
@@ -60,10 +80,17 @@ export default function BulkProductsPage() {
             values: a.values || [],
           }))
         );
+      } catch {
+        toast.error(t("bulk_products.load_failed"));
+      }
+
+      // Load brands
+      try {
+        const brandRes = await brands.getBrands({ limit: 500 });
         const bl = brandRes.data?.data?.brands || brandRes.data?.brands || [];
         setBrandsList(bl.map((b: { id: string; name: string }) => ({ id: b.id, name: b.name })));
       } catch {
-        toast.error(t("bulk_products.load_failed"));
+        // brands are optional, silent fail
       }
     };
     load();
@@ -279,6 +306,7 @@ export default function BulkProductsPage() {
           row={row}
           index={index}
           allCategories={allCategories}
+          subCategoriesMap={subCategoriesMap}
           allAttributes={allAttributes}
           brandsList={brandsList}
           autoSku={autoSku}

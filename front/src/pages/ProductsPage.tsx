@@ -955,13 +955,8 @@ export function ProductForm({
           formData.append("primaryCategoryId", product.primaryCategoryId);
         }
       }
-      // Add sub-categories information
-      if (selectedSubCategories.length > 0) {
-        formData.append(
-          "subCategoryIds",
-          JSON.stringify(selectedSubCategories)
-        );
-      }
+      // Always send subCategoryIds so server can clear them if empty
+      formData.append("subCategoryIds", JSON.stringify(selectedSubCategories));
 
       // Add simple product data if no variants
       if (!hasVariants) {
@@ -1031,17 +1026,13 @@ export function ProductForm({
           imageFiles
         );
 
-        // Add primary image index
-        const primaryIndex = imagePreviews.findIndex(
-          (img) => img.isPrimary === true
-        );
-        if (primaryIndex >= 0) {
-          formData.append("primaryImageIndex", String(primaryIndex));
-          console.log(`📸 Primary image index: ${primaryIndex}`);
+        // Add primary image index — only count new files (imageFiles), not existing server images
+        const newImagePreviews = imagePreviews.filter((img) => !img.id);
+        const primaryNewIndex = newImagePreviews.findIndex((img) => img.isPrimary === true);
+        if (primaryNewIndex >= 0) {
+          formData.append("primaryImageIndex", String(primaryNewIndex));
         } else {
-          // Default to first image as primary if none is marked
           formData.append("primaryImageIndex", "0");
-          console.log(`📸 Default primary image index: 0`);
         }
 
         // Append each image file with proper field name for multer
@@ -1366,6 +1357,23 @@ export function ProductForm({
       ...prev,
       categoryIds: newSelectedCategoryIds,
     }));
+
+    // Keep selectedCategories in sync with categoryIds
+    setSelectedCategories(
+      newSelectedCategoryIds
+        .map((id) => categories.find((c) => c.id === id))
+        .filter(Boolean)
+    );
+
+    // Remove selected subcategories that belong to deselected categories
+    if (isSelected) {
+      setSelectedSubCategories((prev) => {
+        const validSubCatIds = newSelectedCategoryIds.flatMap(
+          (catId) => (subCategoriesMap[catId] || []).map((s: any) => s.id)
+        );
+        return prev.filter((id) => validSubCatIds.includes(id));
+      });
+    }
   };
 
   // Handle setting primary category

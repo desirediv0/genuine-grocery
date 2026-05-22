@@ -40,6 +40,7 @@ export interface BulkProductRow {
   categoryIds: string[];
   newCategoryNames: string[];
   primaryCategoryId: string;
+  subCategoryIds: string[];
   brandId: string;
   productType: string[];
   hasVariants: boolean;
@@ -164,6 +165,7 @@ export function createSimpleProductExample(): BulkProductRow {
     categoryIds: [],
     newCategoryNames: ["Spices"],
     primaryCategoryId: "",
+    subCategoryIds: [],
     brandId: "",
     productType: ["new"],
     hasVariants: false,
@@ -203,6 +205,7 @@ export function createVariantProductExample(): BulkProductRow {
     categoryIds: [],
     newCategoryNames: ["Grains", "Rice"],
     primaryCategoryId: "",
+    subCategoryIds: [],
     brandId: "",
     productType: ["featured"],
     hasVariants: true,
@@ -226,6 +229,7 @@ export function createEmptyProductRow(): BulkProductRow {
     categoryIds: [],
     newCategoryNames: [],
     primaryCategoryId: "",
+    subCategoryIds: [],
     brandId: "",
     productType: [],
     hasVariants: false,
@@ -454,6 +458,10 @@ export async function submitBulkProduct(
 
   if (row.brandId) {
     formData.append("brandId", row.brandId);
+  }
+
+  if (row.subCategoryIds && row.subCategoryIds.length > 0) {
+    formData.append("subCategoryIds", JSON.stringify(row.subCategoryIds));
   }
 
   if (!row.hasVariants) {
