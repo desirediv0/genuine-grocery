@@ -27,18 +27,18 @@ import { User, Package, MapPin, Heart, LogOut, Zap } from "lucide-react";
 ───────────────────────────────────────────── */
 const CONTACT = {
   email: "connect.genuinenutrition@gmail.com",
-  phone: "+91 99999 99999",
+
 };
 
 const NAV_LINKS = [
-  { href: "/products",   label: "Grocery Shop" },
-  { href: "/about",      label: "Our Story"     },
-  { href: "/contact",    label: "Support"      },
+  { href: "/products", label: "Grocery Shop" },
+  { href: "/about", label: "Our Story" },
+  { href: "/contact", label: "Support" },
 ];
 
 const FOOTER_LINKS = [
-  { href: "/about",           label: "About Us"        },
-  { href: "/contact",         label: "Contact"         },
+  { href: "/about", label: "About Us" },
+  { href: "/contact", label: "Contact" },
   { href: "/shipping-policy", label: "Shipping Policy" },
 ];
 
@@ -89,19 +89,19 @@ function AvatarCircle({ name, size = "sm" }) {
 ───────────────────────────────────────────── */
 export function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
-  const { getCartItemCount }              = useCart();
-  const router                            = useRouter();
-  const pathname                          = usePathname();
+  const { getCartItemCount } = useCart();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const [isMenuOpen,     setIsMenuOpen]     = useState(false);
-  const [categories,     setCategories]     = useState([]);
-  const [searchQuery,    setSearchQuery]    = useState("");
-  const [isSearchOpen,   setIsSearchOpen]   = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [isScrolled,     setIsScrolled]     = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const searchInputRef = useRef(null);
-  const navbarRef      = useRef(null);
+  const navbarRef = useRef(null);
 
   // ── Side effects ────────────────────────────
   useEffect(() => {
@@ -175,10 +175,7 @@ export function Navbar() {
                   <FiMail className="h-3.5 w-3.5" />
                   <span className="hidden sm:inline">{CONTACT.email}</span>
                 </a>
-                <a href={`tel:${CONTACT.phone}`} className="hidden md:flex items-center gap-1 hover:text-white/80 transition-colors">
-                  <FiPhone className="h-3.5 w-3.5" />
-                  {CONTACT.phone}
-                </a>
+
               </div>
 
               {/* Center: Promo */}
@@ -189,8 +186,8 @@ export function Navbar() {
               {/* Right: Quick Links */}
               <div className="flex items-center gap-3">
                 <Link href="/shipping-policy" className="hover:text-white/80 transition-colors">Shipping</Link>
-                <Link href="/faqs"            className="hover:text-white/80 transition-colors">FAQs</Link>
-                <Link href="/contact"         className="hover:text-white/80 transition-colors hidden sm:inline">Contact</Link>
+                <Link href="/faqs" className="hover:text-white/80 transition-colors">FAQs</Link>
+                <Link href="/contact" className="hover:text-white/80 transition-colors hidden sm:inline">Contact</Link>
               </div>
             </div>
           </div>
@@ -204,7 +201,7 @@ export function Navbar() {
               {/* Logo */}
               <Link href="/" className="flex items-center gap-2">
                 <Image src="/logo.png" alt="Logo" width={180} height={65} className="h-12 md:h-16 w-auto" priority />
-                
+
               </Link>
 
               {/* Desktop Nav */}
@@ -365,10 +362,10 @@ function AccountDropdown({ user, isAuthenticated, activeDropdown, setActiveDropd
 
                   <div className="py-2">
                     {[
-                      { href: "/account",           icon: User,    label: "My Profile"  },
-                      { href: "/account/orders",    icon: Package, label: "My Orders"   },
-                      { href: "/account/addresses", icon: MapPin,  label: "Addresses"   },
-                      { href: "/wishlist",          icon: Heart,   label: "Wishlist"    },
+                      { href: "/account", icon: User, label: "My Profile" },
+                      { href: "/account/orders", icon: Package, label: "My Orders" },
+                      { href: "/account/addresses", icon: MapPin, label: "Addresses" },
+                      { href: "/wishlist", icon: Heart, label: "Wishlist" },
                     ].map(({ href, icon: Icon, label }) => (
                       <Link key={href} href={href} onClick={() => setActiveDropdown(null)}
                         className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors">
@@ -505,7 +502,7 @@ function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCo
         <div className="flex items-center justify-between p-4 border-b border-gray-100 flex-shrink-0">
           <div className="flex items-center gap-2">
             <Image src="/logo.png" alt="Logo" width={100} height={35} className="h-8 w-auto" />
-            
+
           </div>
           <button onClick={onClose} className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg">
             <FiX className="h-5 w-5" />
@@ -541,10 +538,10 @@ function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCo
 
           {/* Main Links */}
           <div className="px-4 space-y-0.5">
-            <MobileNavItem href="/products"   icon={FiZap}          label="All Products"  onClick={onClose} />
-            <MobileNavItem href="/categories" icon={FiSearch}       label="Categories"    onClick={onClose} />
-            <MobileNavItem href="/wishlist"   icon={FiHeart}        label="Wishlist"      onClick={onClose} />
-            <MobileNavItem href="/cart"       icon={FiShoppingCart} label="Cart"          onClick={onClose} badge={cartCount} />
+            <MobileNavItem href="/products" icon={FiZap} label="All Products" onClick={onClose} />
+            <MobileNavItem href="/categories" icon={FiSearch} label="Categories" onClick={onClose} />
+            <MobileNavItem href="/wishlist" icon={FiHeart} label="Wishlist" onClick={onClose} />
+            <MobileNavItem href="/cart" icon={FiShoppingCart} label="Cart" onClick={onClose} badge={cartCount} />
           </div>
 
           {/* Category shortcuts */}
@@ -564,9 +561,9 @@ function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCo
             {isAuthenticated && (
               <Section title="Account">
                 {[
-                  { href: "/account",           icon: FiUser,    label: "Profile"    },
-                  { href: "/account/orders",    icon: FiPackage, label: "My Orders"  },
-                  { href: "/account/addresses", icon: FiMapPin,  label: "Addresses"  },
+                  { href: "/account", icon: FiUser, label: "Profile" },
+                  { href: "/account/orders", icon: FiPackage, label: "My Orders" },
+                  { href: "/account/addresses", icon: FiMapPin, label: "Addresses" },
                 ].map(({ href, icon, label }) => (
                   <MobileNavItem key={href} href={href} icon={icon} label={label} onClick={onClose} />
                 ))}

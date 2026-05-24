@@ -112,7 +112,7 @@ function ProductsContent() {
     const [selectedAttributes, setSelectedAttributes] = useState({});
     const [openSections, setOpenSections] = useState({ search: true, categories: true });
     const [searchInput, setSearchInput] = useState(searchQuery);
-    const [pagination, setPagination] = useState({ page: pageParam, limit: 12, total: 0, pages: 0 });
+    const [pagination, setPagination] = useState({ page: pageParam, limit: 20, total: 0, pages: 0 });
 
     const [filters, setFilters] = useState({
         search: searchQuery, category: categorySlug, productType,

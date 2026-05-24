@@ -3,31 +3,31 @@ import Link from "next/link";
 
 const STATS = [
   { value: "10,000+", label: "Happy Families" },
-  { value: "15 Years",  label: "Nutritional Excellence" },
-  { value: "100%",   label: "Pure & Organic" },
-  { value: "Free",   label: "Delivery above ₹499" },
+  { value: "15 Years", label: "Nutritional Excellence" },
+  { value: "100%", label: "Pure & Organic" },
+  { value: "Free", label: "Delivery above ₹499" },
 ];
 
 const PROMISES = [
   {
     icon: Factory,
     title: "Farm to Home Direct",
-    body:  "We source directly from our certified local farms. No distributors or middlemen — just pure, fresh products delivered straight to your doorstep.",
+    body: "We source directly from our certified local farms. No distributors or middlemen — just pure, fresh products delivered straight to your doorstep.",
   },
   {
     icon: ShieldCheck,
     title: "Freshness & Purity Guarantee",
-    body:  "Every batch is tested for quality and purity. Not happy? We replace it immediately with our zero-questions-asked fresh policy.",
+    body: "Every batch is tested for quality and purity. Not happy? We replace it immediately with our zero-questions-asked fresh policy.",
   },
   {
     icon: Phone,
     title: "Dedicated Customer Support",
-    body:  "Our team of experts is here to help you choose the right products for your family's health and nutritional needs.",
+    body: "Our team of experts is here to help you choose the right products for your family's health and nutritional needs.",
   },
   {
     icon: Truck,
     title: "Safe & Fresh Delivery",
-    body:  "We use specialized packaging and optimized logistics to ensure your grocery products stay fresh until they reach you.",
+    body: "We use specialized packaging and optimized logistics to ensure your grocery products stay fresh until they reach you.",
   },
 ];
 
@@ -36,7 +36,7 @@ export const WhyBuySection = () => {
     <section className="py-24 bg-white relative overflow-hidden">
       {/* Subtle background element */}
       <div className="absolute top-1/2 left-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2" />
-      
+
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-20">
@@ -109,9 +109,7 @@ export const WhyBuySection = () => {
             <Link href="/contact" className="px-8 py-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-2xl transition-all text-center">
               Get in Touch
             </Link>
-            <a href="tel:+919999999999" className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl transition-all border border-white/10 text-center">
-              Call Support
-            </a>
+
           </div>
         </div>
       </div>

@@ -41,7 +41,7 @@ export default function CategoryPage() {
 
     const [pagination, setPagination] = useState({
         page: 1,
-        limit: 12,
+        limit: 15,
         total: 0,
         pages: 0,
     });
