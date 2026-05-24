@@ -30,43 +30,43 @@ const calcDiscount = (reg, sale) => {
 };
 
 const TRUST = [
-  { icon: Truck,       label: "Free shipping above ₹999" },
-  { icon: ShieldCheck, label: "Pure & Organic"            },
-  { icon: RotateCcw,   label: "Freshness Guaranteed"     },
-  { icon: Package,     label: "Farm Direct Delivery"     },
+  { icon: Truck, label: "Free shipping above ₹999" },
+  { icon: ShieldCheck, label: "Pure & Organic" },
+  { icon: RotateCcw, label: "Freshness Guaranteed" },
+  { icon: Package, label: "Farm Direct Delivery" },
 ];
 
 /* ─────────────────────────────────────────────
    COMPONENT
 ───────────────────────────────────────────── */
 export default function ProductContent({ slug }) {
-  const [product,               setProduct]               = useState(null);
-  const [relatedProducts,       setRelatedProducts]       = useState([]);
-  const [loading,               setLoading]               = useState(true);
-  const [error,                 setError]                 = useState(null);
-  const [mainImage,             setMainImage]             = useState(null);
-  const [selectedAttributes,    setSelectedAttributes]    = useState({});
-  const [selectedVariant,       setSelectedVariant]       = useState(null);
-  const [quantity,              setQuantity]              = useState(1);
-  const [effectivePriceInfo,    setEffectivePriceInfo]    = useState(null);
-  const [activeTab,             setActiveTab]             = useState("description");
-  const [isAddingToWishlist,    setIsAddingToWishlist]    = useState(false);
-  const [isInWishlist,          setIsInWishlist]          = useState(false);
-  const [isAddingToCart,        setIsAddingToCart]        = useState(false);
-  const [cartSuccess,           setCartSuccess]           = useState(false);
+  const [product, setProduct] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [mainImage, setMainImage] = useState(null);
+  const [selectedAttributes, setSelectedAttributes] = useState({});
+  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [effectivePriceInfo, setEffectivePriceInfo] = useState(null);
+  const [activeTab, setActiveTab] = useState("description");
+  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [cartSuccess, setCartSuccess] = useState(false);
   const [availableCombinations, setAvailableCombinations] = useState([]);
-  const [initialLoading,        setInitialLoading]        = useState(true);
-  const [priceSettings,         setPriceSettings]         = useState(null);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [priceSettings, setPriceSettings] = useState(null);
 
   const { isAuthenticated } = useAuth();
-  const router              = useRouter();
+  const router = useRouter();
   const { addVariantToCart } = useAddVariantToCart();
 
   /* ── Slab pricing ── */
   const getEffectivePrice = (variant, qty) => {
     if (!variant) return null;
     const salePrice = variant.salePrice ? parseFloat(variant.salePrice) : null;
-    const regPrice  = variant.price     ? parseFloat(variant.price)     : 0;
+    const regPrice = variant.price ? parseFloat(variant.price) : 0;
 
     let price = salePrice && salePrice < regPrice ? salePrice : regPrice;
     let originalPrice = salePrice && salePrice < regPrice ? regPrice : null;
@@ -175,9 +175,9 @@ export default function ProductContent({ slug }) {
 
   /* ── Quantity ── */
   const handleQuantityChange = (delta) => {
-    const moq   = selectedVariant?.moq || 1;
+    const moq = selectedVariant?.moq || 1;
     const stock = selectedVariant?.stock || selectedVariant?.quantity || 0;
-    const next  = quantity + delta;
+    const next = quantity + delta;
     if (next < moq) return;
     if (stock > 0 && next > stock) return;
     setQuantity(next);
@@ -240,7 +240,7 @@ export default function ProductContent({ slug }) {
 
     if (product?.flashSale?.isActive) {
       const flashPrice = parseFloat(product.flashSale.flashSalePrice);
-      const regPrice   = parseFloat(product.basePrice);
+      const regPrice = parseFloat(product.basePrice);
       const disc = calcDiscount(regPrice, flashPrice);
       return (
         <div className="space-y-1">
@@ -293,8 +293,8 @@ export default function ProductContent({ slug }) {
       );
     }
 
-    const bp   = parseFloat(product?.basePrice)    || 0;
-    const rp   = parseFloat(product?.regularPrice) || 0;
+    const bp = parseFloat(product?.basePrice) || 0;
+    const rp = parseFloat(product?.regularPrice) || 0;
     const currentPrice = (product?.hasSale && rp > bp) ? bp : (bp || rp);
     const originalPrice = (product?.hasSale && rp > bp) ? rp : null;
     const disc = originalPrice ? calcDiscount(originalPrice, currentPrice) : 0;
@@ -356,10 +356,10 @@ export default function ProductContent({ slug }) {
     </div>
   );
 
-  const images     = getImages();
-  const primary    = mainImage && images.some((i) => i.url === mainImage.url)
+  const images = getImages();
+  const primary = mainImage && images.some((i) => i.url === mainImage.url)
     ? mainImage : (images.find((i) => i.isPrimary) || images[0]);
-  const stock      = selectedVariant?.stock || selectedVariant?.quantity || 0;
+  const stock = selectedVariant?.stock || selectedVariant?.quantity || 0;
   const outOfStock = selectedVariant && stock === 0;
 
   /* ─────────────────────────────────────────
@@ -371,7 +371,7 @@ export default function ProductContent({ slug }) {
 
         {/* Breadcrumb */}
         <nav className="flex items-center gap-1.5 text-xs text-gray-400 mb-8 flex-wrap">
-          <Link href="/"        className="hover:text-gray-700 transition-colors">Home</Link>
+          <Link href="/" className="hover:text-gray-700 transition-colors">Home</Link>
           <ChevronRight className="h-3 w-3 flex-shrink-0" />
           <Link href="/products" className="hover:text-gray-700 transition-colors">Products</Link>
           {(product.category || product.categories?.[0]?.category) && (
@@ -383,6 +383,12 @@ export default function ProductContent({ slug }) {
               >
                 {product.category?.name || product.categories[0].category.name}
               </Link>
+            </>
+          )}
+          {product.subCategories?.length > 0 && (
+            <>
+              <ChevronRight className="h-3 w-3 flex-shrink-0" />
+              <span className="text-gray-700 font-medium">{product.subCategories[0].name}</span>
             </>
           )}
           <ChevronRight className="h-3 w-3 flex-shrink-0" />
@@ -422,9 +428,8 @@ export default function ProductContent({ slug }) {
               <button
                 onClick={handleWishlist}
                 disabled={isAddingToWishlist}
-                className={`absolute top-4 right-4 w-9 h-9 rounded-full shadow-sm flex items-center justify-center transition-all ${
-                  isInWishlist ? "bg-red-50 text-red-500" : "bg-white/90 text-gray-400 hover:text-red-400"
-                }`}
+                className={`absolute top-4 right-4 w-9 h-9 rounded-full shadow-sm flex items-center justify-center transition-all ${isInWishlist ? "bg-red-50 text-red-500" : "bg-white/90 text-gray-400 hover:text-red-400"
+                  }`}
               >
                 <Heart className={`h-4 w-4 ${isInWishlist ? "fill-red-500" : ""}`} />
               </button>
@@ -439,9 +444,8 @@ export default function ProductContent({ slug }) {
                     <button
                       key={idx}
                       onClick={() => setMainImage(img)}
-                      className={`relative flex-shrink-0 w-[72px] h-[72px] rounded-2xl overflow-hidden border-2 transition-all duration-150 bg-gray-50 ${
-                        active ? "border-primary shadow-sm" : "border-transparent hover:border-gray-300"
-                      }`}
+                      className={`relative flex-shrink-0 w-[72px] h-[72px] rounded-2xl overflow-hidden border-2 transition-all duration-150 bg-gray-50 ${active ? "border-primary shadow-sm" : "border-transparent hover:border-gray-300"
+                        }`}
                     >
                       <Image src={getImageUrl(img.url)} alt="" fill className="object-contain p-1.5" sizes="72px" />
                     </button>
@@ -472,7 +476,7 @@ export default function ProductContent({ slug }) {
             {/* Rating */}
             <div className="flex items-center gap-2.5 mb-6 pb-6 border-b border-gray-100">
               <div className="flex gap-0.5">
-                {[1,2,3,4,5].map((s) => (
+                {[1, 2, 3, 4, 5].map((s) => (
                   <Star key={s} className={`h-4 w-4 ${s <= Math.round(product.avgRating || 0) ? "fill-amber-400 text-amber-400" : "fill-gray-200 text-gray-200"}`} />
                 ))}
               </div>
@@ -512,7 +516,7 @@ export default function ProductContent({ slug }) {
             {/* Attributes */}
             {product.attributeOptions?.map((attr) => {
               const values = getAvailableValues(attr.id);
-              const selId  = selectedAttributes[attr.id];
+              const selId = selectedAttributes[attr.id];
               const selVal = values.find((v) => v.id === selId);
               return (
                 <div key={attr.id} className="mb-6">
@@ -530,11 +534,10 @@ export default function ProductContent({ slug }) {
                           <button
                             key={v.id}
                             onClick={() => handleAttributeChange(attr.id, v.id)}
-                            className={`px-4 py-2 rounded-xl text-sm font-medium border-2 transition-all duration-150 ${
-                              active
+                            className={`px-4 py-2 rounded-xl text-sm font-medium border-2 transition-all duration-150 ${active
                                 ? "border-primary bg-primary text-white shadow-sm"
                                 : "border-gray-200 text-gray-700 bg-white hover:border-gray-400"
-                            }`}
+                              }`}
                           >
                             {v.value}
                           </button>
@@ -554,7 +557,7 @@ export default function ProductContent({ slug }) {
                 {selectedVariant && stock > 0 && (
                   <span className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-green-50 border border-green-100 text-sm font-medium text-green-700">
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse flex-shrink-0" />
-                    In Stock 
+                    In Stock
                   </span>
                 )}
                 {outOfStock && (
@@ -606,11 +609,10 @@ export default function ProductContent({ slug }) {
               <button
                 onClick={handleAddToCart}
                 disabled={isAddingToCart || outOfStock || (!selectedVariant && !product?.variants?.length)}
-                className={`flex-1 h-12 flex items-center justify-center gap-2.5 rounded-xl text-base font-bold transition-all active:scale-[.98] disabled:opacity-50 disabled:cursor-not-allowed ${
-                  cartSuccess
+                className={`flex-1 h-12 flex items-center justify-center gap-2.5 rounded-xl text-base font-bold transition-all active:scale-[.98] disabled:opacity-50 disabled:cursor-not-allowed ${cartSuccess
                     ? "bg-green-600 text-white"
                     : "bg-primary text-white hover:bg-primary/90"
-                }`}
+                  }`}
               >
                 {isAddingToCart ? (
                   <>
@@ -628,11 +630,10 @@ export default function ProductContent({ slug }) {
               <button
                 onClick={handleWishlist}
                 disabled={isAddingToWishlist}
-                className={`w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-xl border-2 transition-all ${
-                  isInWishlist
+                className={`w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-xl border-2 transition-all ${isInWishlist
                     ? "border-red-200 bg-red-50 text-red-500"
                     : "border-gray-200 text-gray-400 hover:border-red-200 hover:text-red-400"
-                }`}
+                  }`}
               >
                 <Heart className={`h-5 w-5 ${isInWishlist ? "fill-red-500" : ""}`} />
               </button>
@@ -675,17 +676,16 @@ export default function ProductContent({ slug }) {
           <div className="flex gap-0 border-b-2 border-gray-100 overflow-x-auto mb-8">
             {[
               { key: "description", label: "Description" },
-              { key: "reviews",     label: `Reviews (${product.reviewCount || 0})` },
-              { key: "shipping",    label: "Shipping & Returns" },
+              { key: "reviews", label: `Reviews (${product.reviewCount || 0})` },
+              { key: "shipping", label: "Shipping & Returns" },
             ].map(({ key, label }) => (
               <button
                 key={key}
                 onClick={() => setActiveTab(key)}
-                className={`px-6 py-3.5 text-sm font-semibold whitespace-nowrap border-b-2 -mb-[2px] transition-all ${
-                  activeTab === key
+                className={`px-6 py-3.5 text-sm font-semibold whitespace-nowrap border-b-2 -mb-[2px] transition-all ${activeTab === key
                     ? "border-primary text-primary"
                     : "border-transparent text-gray-500 hover:text-gray-800"
-                }`}
+                  }`}
               >
                 {label}
               </button>
@@ -715,16 +715,16 @@ export default function ProductContent({ slug }) {
                 {
                   title: "Shipping",
                   rows: [
-                    ["Standard delivery",  "1–2 business days (Local)"],
-                    ["Free shipping",      "On orders above ₹999"],
-                    ["Express delivery",   "Same day delivery available"],
+                    ["Standard delivery", "1–2 business days (Local)"],
+                    ["Free shipping", "On orders above ₹999"],
+                    ["Express delivery", "Same day delivery available"],
                   ],
                 },
                 {
                   title: "Returns",
                   rows: [
-                    ["Condition",  "Unused, in original packaging"],
-                    ["Process",    "Initiate from your account — we arrange pickup"],
+                    ["Condition", "Unused, in original packaging"],
+                    ["Process", "Initiate from your account — we arrange pickup"],
                   ],
                 },
               ].map(({ title, rows }) => (

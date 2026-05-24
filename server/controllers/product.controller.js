@@ -381,6 +381,11 @@ export const getProductBySlug = asyncHandler(async (req, res) => {
           category: true,
         },
       },
+      subCategories: {
+        include: {
+          subCategory: true,
+        },
+      },
       brand: true,
       images: {
         orderBy: { isPrimary: "desc" },
@@ -441,6 +446,15 @@ export const getProductBySlug = asyncHandler(async (req, res) => {
     // Add primary category
     category:
       product.categories.length > 0 ? product.categories[0].category : null,
+    // Add sub-categories (from join table)
+    subCategories: product.subCategories
+      ? product.subCategories.map((psc) => ({
+        id: psc.subCategory.id,
+        name: psc.subCategory.name,
+        slug: psc.subCategory.slug,
+        image: psc.subCategory.image ? getFileUrl(psc.subCategory.image) : null,
+      }))
+      : [],
     // Include brand (only select basic fields)
     brand: product.brand
       ? {
