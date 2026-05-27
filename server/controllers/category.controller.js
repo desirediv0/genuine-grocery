@@ -296,6 +296,117 @@ export const getProductsByCategory = asyncHandler(async (req, res) => {
   );
 });
 
+// Get products by sub-category slug (public)
+export const getProductsBySubCategory = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+  const { page = 1, limit = 15, sort = "createdAt", order = "desc" } = req.query;
+
+  const subCategory = await prisma.subCategory.findFirst({
+    where: { slug, isActive: true },
+    include: { category: true },
+  });
+
+  if (!subCategory) throw new ApiError(404, "Sub-category not found");
+
+  const where = {
+    subCategories: { some: { subCategoryId: subCategory.id } },
+    isActive: true,
+  };
+
+  const totalProducts = await prisma.product.count({ where });
+
+  const products = await prisma.product.findMany({
+    where,
+    include: {
+      images: { where: { isPrimary: true }, take: 1 },
+      categories: { include: { category: true }, take: 1 },
+      variants: {
+        where: { isActive: true },
+        include: {
+          attributes: { include: { attributeValue: { include: { attribute: true } } } },
+          images: true,
+        },
+      },
+      _count: { select: { reviews: true } },
+    },
+    orderBy: [{ ourProduct: "desc" }, { [sort]: order }],
+    skip: (parseInt(page) - 1) * parseInt(limit),
+    take: parseInt(limit),
+  });
+
+  const now = new Date();
+  const productIds = products.map((p) => p.id);
+  const flashSaleProducts = await prisma.flashSaleProduct.findMany({
+    where: {
+      productId: { in: productIds },
+      flashSale: { isActive: true, startTime: { lte: now }, endTime: { gte: now } },
+    },
+    include: { flashSale: { select: { id: true, name: true, discountPercentage: true, endTime: true } } },
+  });
+  const flashSaleMap = {};
+  flashSaleProducts.forEach((fsp) => {
+    flashSaleMap[fsp.productId] = {
+      isActive: true,
+      flashSaleId: fsp.flashSale.id,
+      name: fsp.flashSale.name,
+      discountPercentage: fsp.flashSale.discountPercentage,
+      endTime: fsp.flashSale.endTime,
+    };
+  });
+
+  const formattedProducts = products.map((product) => {
+    const primaryCategory = product.categories.length > 0 ? product.categories[0].category : null;
+    let imageUrl = null;
+    if (product.images?.length) imageUrl = product.images[0].url;
+    else {
+      const vwi = product.variants?.find((v) => v.images?.length);
+      if (vwi) imageUrl = vwi.images[0].url;
+    }
+    const basePrice = product.variants.length > 0
+      ? Math.min(...product.variants.map((v) => parseFloat(v.salePrice || v.price)))
+      : null;
+    const regularPrice = product.variants.length > 0
+      ? Math.min(...product.variants.map((v) => parseFloat(v.price)))
+      : null;
+    const hasSale = product.variants.some((v) => v.salePrice !== null);
+    const flashSale = flashSaleMap[product.id] || null;
+    let flashSalePrice = null;
+    if (flashSale && basePrice !== null) {
+      flashSalePrice = Math.round((basePrice - (basePrice * flashSale.discountPercentage) / 100) * 100) / 100;
+    }
+    return {
+      ...product,
+      category: primaryCategory,
+      images: product.images.map((img) => ({ ...img, url: getFileUrl(img.url) })),
+      image: imageUrl ? getFileUrl(imageUrl) : null,
+      basePrice,
+      regularPrice,
+      hasSale,
+      flashSale: flashSale ? { ...flashSale, flashSalePrice } : null,
+    };
+  });
+
+  res.status(200).json(
+    new ApiResponsive(200, {
+      subCategory: {
+        ...subCategory,
+        image: subCategory.image ? getFileUrl(subCategory.image) : null,
+        category: {
+          ...subCategory.category,
+          image: subCategory.category.image ? getFileUrl(subCategory.category.image) : null,
+        },
+      },
+      products: formattedProducts,
+      pagination: {
+        total: totalProducts,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        pages: Math.ceil(totalProducts / parseInt(limit)),
+      },
+    }, "Products fetched successfully")
+  );
+});
+
 // ---------------------- ADMIN ROUTES ---------------------- //
 
 // Get all categories for admin (including inactive ones)

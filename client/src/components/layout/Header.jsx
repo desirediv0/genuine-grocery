@@ -316,7 +316,7 @@ export function Navbar() {
       />
 
       {/* ── Mobile Bottom Nav ── */}
-      <BottomNav pathname={pathname} isAuthenticated={isAuthenticated} cartCount={cartCount} />
+      <BottomNav pathname={pathname} isAuthenticated={isAuthenticated} cartCount={cartCount} onMenuOpen={() => setIsMenuOpen(true)} />
     </>
   );
 }
@@ -615,62 +615,70 @@ function Section({ title, children }) {
 /* ─────────────────────────────────────────────
    MOBILE BOTTOM NAV
 ───────────────────────────────────────────── */
-function BottomNav({ pathname, isAuthenticated, cartCount }) {
-  const items = [
-    {
-      href: "/",
-      label: "Home",
-      icon: (
-        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-        </svg>
-      ),
-      active: pathname === "/",
-    },
-    {
-      href: "/categories",
-      label: "Categories",
-      icon: <FiSearch className="h-5 w-5" />,
-      active: pathname === "/categories",
-    },
-    {
-      href: "/cart",
-      label: "Cart",
-      icon: (
-        <div className="relative">
-          <FiShoppingCart className="h-5 w-5" />
-          <ClientOnly>
-            {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center px-1">
-                {cartCount}
-              </span>
-            )}
-          </ClientOnly>
-        </div>
-      ),
-      active: pathname === "/cart",
-    },
-    {
-      href: isAuthenticated ? "/account" : "/auth",
-      label: "Account",
-      icon: <FiUser className="h-5 w-5" />,
-      active: pathname.startsWith("/account") || pathname === "/auth",
-    },
-  ];
-
+function BottomNav({ pathname, isAuthenticated, cartCount, onMenuOpen }) {
   return (
     <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-50 safe-area-pb">
-      <div className="grid grid-cols-4">
-        {items.map(({ href, label, icon, active }) => (
-          <Link
-            key={href}
-            href={href}
-            className={cn("flex flex-col items-center py-2.5 transition-colors", active ? "text-primary" : "text-gray-400 hover:text-gray-600")}
-          >
-            {icon}
-            <span className="text-[10px] mt-0.5 font-medium">{label}</span>
-          </Link>
-        ))}
+      <div className="grid grid-cols-5">
+        {/* Home */}
+        <Link
+          href="/"
+          className={cn("flex flex-col items-center py-2.5 transition-colors", pathname === "/" ? "text-primary" : "text-gray-400 hover:text-gray-600")}
+        >
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+          <span className="text-[10px] mt-0.5 font-medium">Home</span>
+        </Link>
+
+        {/* You (login/account) */}
+        <Link
+          href={isAuthenticated ? "/account" : "/auth"}
+          className={cn("flex flex-col items-center py-2.5 transition-colors", pathname.startsWith("/account") || pathname === "/auth" ? "text-primary" : "text-gray-400 hover:text-gray-600")}
+        >
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          <span className="text-[10px] mt-0.5 font-medium">You</span>
+        </Link>
+
+        {/* More (hamburger menu) */}
+        <button
+          onClick={onMenuOpen}
+          className="flex flex-col items-center py-2.5 transition-colors text-gray-400 hover:text-gray-600"
+        >
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <span className="text-[10px] mt-0.5 font-medium">More</span>
+        </button>
+
+        {/* Cart */}
+        <Link
+          href="/cart"
+          className={cn("flex flex-col items-center py-2.5 transition-colors", pathname === "/cart" ? "text-primary" : "text-gray-400 hover:text-gray-600")}
+        >
+          <div className="relative">
+            <FiShoppingCart className="h-5 w-5" />
+            <ClientOnly>
+              {cartCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center px-1">
+                  {cartCount}
+                </span>
+              )}
+            </ClientOnly>
+          </div>
+          <span className="text-[10px] mt-0.5 font-medium">Cart</span>
+        </Link>
+
+        {/* Genuine Nutrition logo */}
+        <a
+          href="https://genuinenutrition.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex flex-col items-center justify-center py-1.5 transition-opacity hover:opacity-80"
+        >
+          <img src="/genuinenutrition.png" alt="Genuine Nutrition" className="h-8 w-auto object-contain" />
+        </a>
       </div>
     </nav>
   );
