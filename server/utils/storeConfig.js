@@ -9,7 +9,7 @@ export const getStoreConfig = () => {
     // Store Information
     storeName: process.env.STORE_NAME || "Genuine Grocery",
     storeEmail: process.env.STORE_EMAIL || "connect.genuinenutrition@gmail.com",
-    storePhone: process.env.STORE_PHONE || "+91 9582855132",
+    storePhone: process.env.STORE_PHONE || "",
     storeAddress:
       process.env.STORE_ADDRESS || "89/2 Sector 39, Gurugram, Haryana",
 

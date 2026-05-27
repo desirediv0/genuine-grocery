@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, MapPin, Phone, Instagram, Facebook, Youtube, ArrowUpRight } from "lucide-react";
+import { Mail, MapPin, Instagram, Facebook, Youtube, ArrowUpRight } from "lucide-react";
 import { fetchApi } from "@/lib/utils";
 
 /* ─────────────────────────────────────────────
@@ -12,17 +12,17 @@ import { fetchApi } from "@/lib/utils";
 const PARTNER_PORTAL_URL = process.env.NEXT_PUBLIC_PARTNER_URL || "https://partner.genuinegrocery.com/login";
 
 const COMPANY_LINKS = [
-  { label: "About Us",        href: "/about"           },
-  { label: "Contact",         href: "/contact"         },
+  { label: "About Us", href: "/about" },
+  { label: "Contact", href: "/contact" },
   { label: "Shipping Policy", href: "/shipping-policy" },
-  { label: "Return Policy",   href: "/return-policy"   },
-  { label: "FAQs",            href: "/faqs"            },
+  { label: "Return Policy", href: "/return-policy" },
+  { label: "FAQs", href: "/faqs" },
 ];
 
 const SOCIALS = [
   { name: "Instagram", href: "https://www.instagram.com/official_GenuineGrocery/", icon: Instagram },
-  { name: "Facebook",  href: "https://www.facebook.com/share/1DCsKYB5Uy/?mibextid=wwXIfr", icon: Facebook  },
-  { name: "YouTube",   href: "https://youtube.com/@GenuineGroceryindia?si=ZkkCpU1DEh48NBSe", icon: Youtube   },
+  { name: "Facebook", href: "https://www.facebook.com/share/1DCsKYB5Uy/?mibextid=wwXIfr", icon: Facebook },
+  { name: "YouTube", href: "https://youtube.com/@GenuineGroceryindia?si=ZkkCpU1DEh48NBSe", icon: Youtube },
 ];
 
 /* ─────────────────────────────────────────────
@@ -58,11 +58,11 @@ export const Footer = () => {
               <Image
                 src="/logo.png"
                 alt="Genuine Grocery"
-                width={130}
-                height={52}
-                className="h-16 w-auto rounded"
+                width={220}
+                height={80}
+                className="h-6 md:h-8 w-auto rounded"
               />
-          
+
             </Link>
 
             <p className="text-sm text-slate-400 leading-relaxed mb-7 max-w-[260px]">
@@ -80,17 +80,6 @@ export const Footer = () => {
                     <Mail className="h-3.5 w-3.5 text-primary" />
                   </span>
                   connect.genuinenutrition@gmail.com
-                </a>
-              </li>
-              <li>
-                <a
-                  href="tel:+919582855132"
-                  className="flex items-center gap-2.5 text-sm text-slate-400 hover:text-primary transition-colors group"
-                >
-                  <span className="w-7 h-7 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
-                    <Phone className="h-3.5 w-3.5 text-primary" />
-                  </span>
-                  +91 95828 55132
                 </a>
               </li>
               <li>
@@ -127,7 +116,7 @@ export const Footer = () => {
             </p>
             <ul className="space-y-3">
               {loadingCats ? (
-                [1,2,3,4].map((i) => (
+                [1, 2, 3, 4].map((i) => (
                   <li key={i} className="h-4 rounded-md bg-white/5 animate-pulse" style={{ width: `${60 + i * 15}px` }} />
                 ))
               ) : categories.length > 0 ? (
@@ -183,13 +172,13 @@ export const Footer = () => {
           {/* ── Partner col ── */}
           <div className="col-span-1">
             <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-primary/70 mb-5">
-            We accept
+              We accept
             </p>
-            
+
 
             {/* Payment methods */}
             <div className="mt-8">
-             
+
               <div className="flex flex-wrap gap-2">
                 {["UPI", "Visa", "MC", "COD", "Net Banking"].map((m) => (
                   <span
