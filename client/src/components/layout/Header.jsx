@@ -499,9 +499,9 @@ function MobileMenu({ isOpen, onClose, user, isAuthenticated, categories, cartCo
       <div className="absolute right-0 top-0 bottom-0 w-[85%] max-w-sm bg-white shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
 
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-100 flex-shrink-0">
+        <div className="flex items-center justify-between p-2 border-b border-gray-100 flex-shrink-0">
           <div className="flex items-center gap-2">
-            <Image src="/logo.png" alt="Logo" width={100} height={35} className="h-7 w-auto" />
+            <Image src="/logo.png" alt="Logo" width={100} height={35} className="h-6 w-auto" />
 
           </div>
           <button onClick={onClose} className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg">
