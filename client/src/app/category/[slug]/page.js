@@ -106,8 +106,8 @@ export default function CategoryPage() {
                     </div>
                 </div>
                 <div className="max-w-7xl mx-auto px-4 py-10">
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                        {[...Array(8)].map((_, i) => <ProductCardSkeleton key={i} />)}
+                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 ">
+                        {[...Array(12)].map((_, i) => <ProductCardSkeleton key={i} />)}
                     </div>
                 </div>
             </div>
@@ -226,7 +226,7 @@ export default function CategoryPage() {
 
                 {/* Products Grid */}
                 {loading ? (
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
                         {[...Array(12)].map((_, i) => <ProductCardSkeleton key={i} />)}
                     </div>
                 ) : products.length === 0 ? (
@@ -241,7 +241,7 @@ export default function CategoryPage() {
                         </Link>
                     </div>
                 ) : (
-                    <div className={`grid gap-4 md:gap-6 ${viewMode === "list" ? "grid-cols-1 xl:grid-cols-2" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"}`}>
+                    <div className={`grid gap-4 md:gap-6 ${viewMode === "list" ? "grid-cols-1 xl:grid-cols-2" : "grid-cols-2  md:grid-cols-4 xl:grid-cols-6"}`}>
                         {products.map((product) => (
                             <ProductCard key={product.id} product={product} viewMode={viewMode} />
                         ))}

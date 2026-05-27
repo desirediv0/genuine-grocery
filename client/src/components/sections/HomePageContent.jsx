@@ -46,7 +46,7 @@ function FeaturedProductsCarousel({ products, isLoading }) {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-4">
         {[...Array(5)].map((_, i) => <ProductSkeleton key={i} />)}
       </div>
     );
@@ -63,7 +63,7 @@ function FeaturedProductsCarousel({ products, isLoading }) {
           {products.map((product, index) => (
             <CarouselItem
               key={product.id || product.slug || index}
-              className="pl-3 basis-1/2 md:basis-1/3 lg:basis-1/5 py-2"
+              className="pl-3 basis-1/2 md:basis-1/4 lg:basis-1/6 py-2"
             >
               <ProductCard product={product} />
             </CarouselItem>

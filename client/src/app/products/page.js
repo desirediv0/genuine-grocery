@@ -555,7 +555,7 @@ function ProductsContent() {
                 {/* Product grid */}
                 <div className="flex-1 min-w-0">
                     {loading && products.length === 0 ? (
-                        <div id="products-grid-anchor" className={`grid gap-3 ${viewMode === "list" ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-2 sm:grid-cols-3 xl:grid-cols-4"}`}>
+                        <div id="products-grid-anchor" className={`grid gap-3 ${viewMode === "list" ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-2 sm:grid-cols-4 xl:grid-cols-5"}`}>
                             {[...Array(12)].map((_, i) => <ProductCardSkeleton key={i} />)}
                         </div>
                     ) : products.length === 0 ? (
@@ -568,7 +568,7 @@ function ProductsContent() {
                             onClearSizes={() => { setSelectedSizes([]); handleFilterChange("size", ""); }}
                         />
                     ) : (
-                        <div className={`grid gap-3 transition-opacity duration-200 ${loading ? "opacity-50 pointer-events-none" : "opacity-100"} ${viewMode === "list" ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-2 sm:grid-cols-3 xl:grid-cols-4"}`}>
+                        <div className={`grid gap-2 transition-opacity duration-200 ${loading ? "opacity-50 pointer-events-none" : "opacity-100"} ${viewMode === "list" ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-2 sm:grid-cols-4 xl:grid-cols-5"}`}>
                             {products.map((product) => (
                                 <ProductCard key={product.id} product={product} viewMode={viewMode} />
                             ))}

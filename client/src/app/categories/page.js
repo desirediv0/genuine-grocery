@@ -10,8 +10,8 @@ import {
     FaCapsules,
     FaSeedling,
 } from "react-icons/fa";
-import { 
-    GiCheeseWedge, 
+import {
+    GiCheeseWedge,
     GiMasonJar,
     GiButter,
     GiCow,
@@ -19,18 +19,18 @@ import {
     GiSpoon,
     GiCupcake,
 } from "react-icons/gi";
-import { 
+import {
     LuMilk,
 } from "react-icons/lu";
-import { 
+import {
     MdOutlineIcecream,
     MdOutlineShoppingBasket,
     MdOutlineLocalDrink,
 } from "react-icons/md";
-import { 
-    BsTagFill 
+import {
+    BsTagFill
 } from "react-icons/bs";
-import { 
+import {
     TbMilk,
 } from "react-icons/tb";
 
@@ -43,7 +43,7 @@ const getImageUrl = (image) => {
 const getCategoryIcon = (category) => {
     const name = category.name?.toLowerCase() || "";
     const slug = category.slug?.toLowerCase() || "";
-    const size = 64; 
+    const size = 64;
 
     // Dairy & Grocery specific mapping
     if (name.includes("milk powder")) return <FaBoxOpen size={size} className="text-blue-500/70" />;
@@ -56,7 +56,7 @@ const getCategoryIcon = (category) => {
     if (name.includes("curd") || slug.includes("curd") || name.includes("yogurt")) return <TbMilk size={size} className="text-blue-500/70" />;
     if (name.includes("ice cream") || slug.includes("ice-cream")) return <MdOutlineIcecream size={size} className="text-blue-500/70" />;
     if (name.includes("turmeric") || slug.includes("haldi")) return <GiSpoon size={size} className="text-blue-500/70" />;
-    
+
     // Animal Feed & Supplements
     if (name.includes("calf feed")) return <FaSeedling size={size} className="text-blue-500/70" />;
     if (name.includes("cow feed")) return <GiGrain size={size} className="text-blue-500/70" />;
@@ -250,8 +250,8 @@ export default function CategoriesPage() {
             {/* Main Content */}
             <div className="mx-auto max-w-7xl px-4 pb-16">
                 {loading ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-                        {[...Array(10)].map((_, index) => (
+                    <div className="grid  grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-4">
+                        {[...Array(12)].map((_, index) => (
                             <CategoryCardSkeleton key={index} />
                         ))}
                     </div>
@@ -273,7 +273,7 @@ export default function CategoriesPage() {
                 ) : (
                     <>
                         {/* Categories Grid */}
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-4">
                             {categories.map((category, index) => (
                                 <CategoryCard key={category.id} category={category} index={index} />
                             ))}
