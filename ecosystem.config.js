@@ -49,7 +49,7 @@ module.exports = {
       script: 'npm',
       args: 'start',
       env: {
-        PORT: 5001,
+        PORT: 5003,
         NODE_ENV: 'production'
       },
       error_file: "/root/.pm2/logs/grocery-partner-error.log",
