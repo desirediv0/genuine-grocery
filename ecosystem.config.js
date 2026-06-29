@@ -45,7 +45,7 @@ module.exports = {
     },
     {
       name: 'grocery-partner',
-      cwd: '/root/genuine-partner/partner',
+      cwd: '/root/genuine-grocery/partner',
       script: 'npm',
       args: 'start',
       env: {
