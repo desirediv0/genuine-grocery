@@ -43,5 +43,19 @@ module.exports = {
       log_date_format: "YYYY-MM-DD HH:mm:ss",
       max_memory_restart: "500M"
     },
+    {
+      name: 'grocery-partner',
+      cwd: '/root/genuine-partner/partner',
+      script: 'npm',
+      args: 'start',
+      env: {
+        PORT: 5001,
+        NODE_ENV: 'production'
+      },
+      error_file: "/root/.pm2/logs/grocery-partner-error.log",
+      out_file: "/root/.pm2/logs/grocery-partner-out.log",
+      log_date_format: "YYYY-MM-DD HH:mm:ss",
+      max_memory_restart: "500M"
+    },
   ]
 };
