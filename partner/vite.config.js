@@ -14,7 +14,7 @@ export default defineConfig({
   },
   // Add the preview configuration for production builds
   preview: {
-    port: 5001,
+    port: 5003,
     host: "0.0.0.0",
     allowedHosts: [
       "partner.genuinegrocery.in",
@@ -23,7 +23,7 @@ export default defineConfig({
   },
   // Add server configuration for development
   server: {
-    port: 5173,
+    port: 5003,
     host: "0.0.0.0",
     allowedHosts: [
       "partner.genuinegrocery.in",
