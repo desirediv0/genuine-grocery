@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
-import axios from "axios";
+import api from "@/api/api";
 import { Link } from "react-router-dom";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { formatDate } from "@/lib/utils";
-import { Trash2, UserMinus, Eye } from "lucide-react";
+import { Trash2, UserMinus, Eye, Clock } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
-const API_URL = import.meta.env.VITE_API_URL;
+
 
 type LastMonthPayment = {
     status: string;
@@ -57,10 +59,72 @@ export default function ApprovedPartnersTab() {
     const [removeCouponError, setRemoveCouponError] = useState("");
 
     // Remove partner state
-    const [removingPartnerId, setRemovingPartnerId] = useState<string | null>(null); useEffect(() => {
+    const [removingPartnerId, setRemovingPartnerId] = useState<string | null>(null);
+
+    // Pay Last Month Dialog State
+    const [payDialogOpen, setPayDialogOpen] = useState(false);
+    const [payPartner, setPayPartner] = useState<ApprovedPartner | null>(null);
+    const [payNotes, setPayNotes] = useState("Paid via UPI");
+    const [payLoading, setPayLoading] = useState(false);
+
+    // Date calculations for last month
+    const now = new Date();
+    const lastYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+    const lastMonth = now.getMonth() === 0 ? 12 : now.getMonth();
+    const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    const openPayDialog = (partner: ApprovedPartner) => {
+        setPayPartner(partner);
+        setPayNotes("Paid via UPI");
+        setPayDialogOpen(true);
+    };
+
+    const handlePayLastMonth = async () => {
+        if (!payPartner) return;
+        setPayLoading(true);
+        try {
+            const earningId = payPartner.lastMonthPayment?.monthlyEarningId || `temp-${lastYear}-${lastMonth}`;
+            const res = await api.patch(`/admin/partners/earnings/${earningId}/mark-paid`, {
+                notes: payNotes,
+                year: lastYear,
+                month: lastMonth,
+                partnerId: payPartner.id
+            });
+
+            if (res.data.success || res.status === 200) {
+                toast.success("Payment marked as paid successfully");
+                setPartners(prev => prev.map(p => {
+                    if (p.id === payPartner.id) {
+                        return {
+                            ...p,
+                            lastMonthPayment: {
+                                status: "PAID",
+                                totalAmount: p.lastMonthPayment?.totalAmount || 0,
+                                paidAt: new Date().toISOString(),
+                                monthlyEarningId: p.lastMonthPayment?.monthlyEarningId || res.data.data?.id || `temp-${lastYear}-${lastMonth}`
+                            }
+                        };
+                    }
+                    return p;
+                }));
+                setPayDialogOpen(false);
+                setPayPartner(null);
+            } else {
+                toast.error(res.data.message || "Failed to update payment status");
+            }
+        } catch (error: any) {
+            console.error("Error marking last month payment as paid:", error);
+            toast.error(error.response?.data?.message || "Failed to update payment status");
+        } finally {
+            setPayLoading(false);
+        }
+    }; useEffect(() => {
         async function fetchApprovedPartners() {
             try {
-                const res = await axios.get(`${API_URL}/api/admin/partners/approved`);
+                const res = await api.get("/admin/partners/approved");
                 setPartners(res.data.data || []);
             } catch {
                 setError(t("reviews.messages.fetch_error"));
@@ -77,7 +141,7 @@ export default function ApprovedPartnersTab() {
         setRemovingCouponId(couponId);
         setRemoveCouponError("");
         try {
-            await axios.delete(`${API_URL}/api/admin/partners/${partnerId}/coupons/${couponId}`);
+            await api.delete(`/admin/partners/${partnerId}/coupons/${couponId}`);
             // Update the selected partner's coupons
             setSelectedPartner(prev => prev ? {
                 ...prev,
@@ -99,7 +163,7 @@ export default function ApprovedPartnersTab() {
         if (!window.confirm(t("partners_tab.approved.confirm_deactivate"))) return;
         setRemovingPartnerId(partnerId);
         try {
-            await axios.post(`${API_URL}/api/admin/partners/${partnerId}/deactivate`);
+            await api.post(`/admin/partners/${partnerId}/deactivate`);
             // Remove from the list
             setPartners(prev => prev.filter(p => p.id !== partnerId));
             setDetailsDialogOpen(false);
@@ -167,11 +231,22 @@ export default function ApprovedPartnersTab() {
                                     </TableCell>
                                     <TableCell>₹{partner.monthlyEarnings?.toFixed(2) || '0.00'}</TableCell>
                                     <TableCell>
-                                        {isPaid ? (
-                                            <Badge className="bg-green-600 hover:bg-green-700">Paid</Badge>
-                                        ) : (
-                                            <Badge variant="secondary">Pending</Badge>
-                                        )}
+                                        <div className="flex items-center gap-2">
+                                            {isPaid ? (
+                                                <Badge className="bg-green-600 hover:bg-green-700">Paid</Badge>
+                                            ) : (
+                                                <div className="flex items-center gap-1.5">
+                                                    <Badge variant="secondary">Pending</Badge>
+                                                    <Button
+                                                        size="sm"
+                                                        className="h-6 px-2 bg-green-600 hover:bg-green-700 text-white text-[10px] font-semibold flex items-center justify-center rounded"
+                                                        onClick={() => openPayDialog(partner)}
+                                                    >
+                                                        Pay
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </div>
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex gap-2">
@@ -313,6 +388,79 @@ export default function ApprovedPartnersTab() {
                         <DialogClose asChild>
                             <Button variant="outline">{t("partners_tab.common.close")}</Button>
                         </DialogClose>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Quick Pay Dialog */}
+            <Dialog open={payDialogOpen} onOpenChange={setPayDialogOpen}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-green-700">
+                            <Clock className="h-5 w-5" />
+                            <span>Confirm Last Month Payment</span>
+                        </DialogTitle>
+                        <DialogDescription>
+                            Mark payment as Paid for {payPartner?.name} for the month of {monthNames[lastMonth - 1]} {lastYear}.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {payPartner && (
+                        <div className="space-y-4 py-2">
+                            <div className="rounded-lg bg-gray-50 border border-gray-100 p-4 space-y-2">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500 font-medium">Partner Name:</span>
+                                    <span className="font-bold text-gray-900">{payPartner.name}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500 font-medium">Partner Email:</span>
+                                    <span className="text-gray-900">{payPartner.email}</span>
+                                </div>
+                                <div className="flex justify-between text-sm border-t pt-2 border-gray-200">
+                                    <span className="text-gray-600 font-semibold">Payment Month:</span>
+                                    <span className="font-semibold text-gray-900">{monthNames[lastMonth - 1]} {lastYear}</span>
+                                </div>
+                                <div className="flex justify-between text-sm border-t pt-2 border-gray-200">
+                                    <span className="text-gray-600 font-bold">Amount to Pay:</span>
+                                    <span className="font-bold text-gray-900">₹{payPartner.lastMonthPayment?.totalAmount?.toFixed(2) || '0.00'}</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-2">Payment Reference / Notes</label>
+                                <Input
+                                    type="text"
+                                    value={payNotes}
+                                    onChange={(e) => setPayNotes(e.target.value)}
+                                    placeholder="e.g. Paid via UPI, Txn #1234"
+                                    className="w-full"
+                                    required
+                                    disabled={payLoading}
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    <DialogFooter className="sm:justify-end gap-2">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => {
+                                setPayDialogOpen(false);
+                                setPayPartner(null);
+                            }}
+                            disabled={payLoading}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="button"
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                            onClick={handlePayLastMonth}
+                            disabled={payLoading || !payNotes.trim()}
+                        >
+                            {payLoading ? "Processing..." : "Confirm Payment"}
+                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

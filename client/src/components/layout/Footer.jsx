@@ -12,11 +12,13 @@ import { fetchApi } from "@/lib/utils";
 const PARTNER_PORTAL_URL = process.env.NEXT_PUBLIC_PARTNER_URL || "https://partner.genuinegrocery.com/login";
 
 const COMPANY_LINKS = [
-  { label: "About Us", href: "/about" },
-  { label: "Contact", href: "/contact" },
+  { label: "Contact Us", href: "/contact" },
+  { label: "FAQ", href: "/faqs" },
+  { label: "Partner with us", href: "/partner-with-us" },
   { label: "Shipping Policy", href: "/shipping-policy" },
-  { label: "Return Policy", href: "/return-policy" },
-  { label: "FAQs", href: "/faqs" },
+  { label: "Cancellation & Refund", href: "/return-policy" },
+  { label: "Terms & Conditions", href: "/terms" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
 ];
 
 const SOCIALS = [
@@ -150,10 +152,10 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* ── Company col ── */}
+          {/* ── Help col ── */}
           <div className="col-span-1">
             <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-primary/70 mb-5">
-              Company
+              Help
             </p>
             <ul className="space-y-3">
               {COMPANY_LINKS.map((l) => (

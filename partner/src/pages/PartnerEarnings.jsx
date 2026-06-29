@@ -382,6 +382,7 @@ const PartnerEarnings = () => {
                                 <tr className="bg-gray-50 border-b border-gray-100">
                                     <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
                                     <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Order ID</th>
+                                    <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Coupon Code</th>
                                     <th className="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Commission</th>
                                     <th className="px-5 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
                                 </tr>
@@ -394,6 +395,9 @@ const PartnerEarnings = () => {
                                         </td>
                                         <td className="px-5 py-3.5 text-sm font-mono text-gray-600 whitespace-nowrap">
                                             {earning.orderId ? `#${earning.orderId.substring(0, 12)}...` : 'N/A'}
+                                        </td>
+                                        <td className="px-5 py-3.5 text-sm text-gray-700 font-semibold whitespace-nowrap">
+                                            {earning.coupon?.code || 'N/A'}
                                         </td>
                                         <td className="px-5 py-3.5 text-sm font-bold text-gray-900 text-right whitespace-nowrap">
                                             &#8377;{parseFloat(earning.commission || earning.amount || 0).toFixed(2)}

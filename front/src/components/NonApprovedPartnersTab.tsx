@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useLanguage } from "@/context/LanguageContext";
-import axios from "axios";
+import api from "@/api/api";
 import { formatDate } from "@/lib/utils";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -10,8 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { CheckCircle, Copy, AlertTriangle } from "lucide-react";
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 type PendingPartner = {
     id: string;
@@ -58,11 +56,8 @@ export default function NonApprovedPartnersTab() {
     useEffect(() => {
         async function fetchNonApprovedPartners() {
             try {
-                const res = await axios.get(`${API_URL}/api/admin/partners/requests`, {
+                const res = await api.get("/admin/partners/requests", {
                     params: { status: "PENDING" },
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-                    },
                 });
                 setPartners(res.data.data.requests || []);
             } catch {
@@ -99,14 +94,9 @@ export default function NonApprovedPartnersTab() {
         setApproveLoading(true);
         setApproveApiError("");
         try {
-            const response = await axios.post(
-                `${API_URL}/api/admin/partners/requests/${approveId}/approve`,
-                { password: passwordToSend },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-                    },
-                }
+            const response = await api.post(
+                `/admin/partners/requests/${approveId}/approve`,
+                { password: passwordToSend }
             );
             // Remove from list since it's now approved
             setPartners(prev => prev.filter(p => p.id !== approveId));
@@ -117,11 +107,7 @@ export default function NonApprovedPartnersTab() {
             setApprovedPassword(confirmedPassword);
             setSuccessDialogOpen(true);
         } catch (err) {
-            if (axios.isAxiosError(err)) {
-                setApproveApiError(err.response?.data?.message || t("partners_tab.non_approved.approve_error"));
-            } else {
-                setApproveApiError(t("partners_tab.non_approved.approve_error"));
-            }
+            setApproveApiError(t("partners_tab.non_approved.approve_error"));
         } finally {
             setApproveLoading(false);
         }
@@ -130,7 +116,7 @@ export default function NonApprovedPartnersTab() {
     const handleReject = async (id: string) => {
         if (!window.confirm(t("partners_tab.non_approved.confirm_reject"))) return;
         try {
-            await axios.post(`${API_URL}/api/admin/partners/requests/${id}/reject`);
+            await api.post(`/admin/partners/requests/${id}/reject`);
             setPartners(prev => prev.map(p => p.id === id ? { ...p, status: "REJECTED" as const } : p));
         } catch {
             alert(t("partners_tab.non_approved.reject_error"));
@@ -164,10 +150,9 @@ export default function NonApprovedPartnersTab() {
         setMessageSending(true);
         setMessageError("");
         try {
-            const res = await axios.post(
-                `${API_URL}/api/admin/partners/${messagePartnerId}/message`,
-                { message: messageText },
-                { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } }
+            const res = await api.post(
+                `/admin/partners/${messagePartnerId}/message`,
+                { message: messageText }
             );
 
             if (res?.data && res.data.success !== false) {
