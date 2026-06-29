@@ -47,10 +47,11 @@ module.exports = {
       name: 'grocery-partner',
       cwd: '/root/genuine-grocery/partner',
       script: 'npm',
-      args: 'start',
+      args: 'run preview',
       env: {
         PORT: 5003,
-        NODE_ENV: 'production'
+        NODE_ENV: 'production',
+        HOST: '0.0.0.0'
       },
       error_file: "/root/.pm2/logs/grocery-partner-error.log",
       out_file: "/root/.pm2/logs/grocery-partner-out.log",
