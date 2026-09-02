@@ -3171,7 +3171,7 @@ function ProductsList() {
         </Card>
       ) : (
         <Card className="bg-[#FFFFFF] border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] rounded-xl overflow-hidden">
-          <div className="divide-y divide-[#E5E7EB]">
+          <div className="divide-y divide-[#E5E7EB] overflow-hidden">
             <SafeRender>
               {productsList.map((product) => {
                 const { basePrice, regularPrice, hasSale } =
@@ -3208,7 +3208,7 @@ function ProductsList() {
                 return (
                   <div
                     key={product.id}
-                    className="flex items-center gap-4 p-4 hover:bg-[#F3F7F6] transition-colors"
+                    className="flex items-center gap-4 p-4 hover:bg-[#F3F7F6] transition-colors overflow-hidden"
                   >
                     {/* Product Image */}
                     <div className="flex-shrink-0">
@@ -3226,11 +3226,11 @@ function ProductsList() {
                     </div>
 
                     {/* Product Info */}
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 overflow-hidden">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-semibold text-[#1F2937] text-base truncate">
+                            <h3 className="font-semibold text-[#1F2937] text-base whitespace-nowrap overflow-hidden text-ellipsis">
                               {product.name}
                             </h3>
                             {product.ourProduct && (
@@ -3269,7 +3269,7 @@ function ProductsList() {
                         </div>
 
                         {/* Price */}
-                        <div className="text-right flex-shrink-0">
+                        <div className="text-right flex-shrink-0 max-w-[120px]">
                           {hasSale ? (
                             <div className="flex flex-col items-end">
                               <span className="font-bold text-[#1F2937]">
