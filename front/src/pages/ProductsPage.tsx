@@ -3024,7 +3024,7 @@ function ProductsList() {
   const hierarchicalCategories = organizeCategories();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-hidden">
       {/* Delete Confirmation Dialog */}
       <DeleteProductDialog
         open={isDeleteDialogOpen}
