@@ -3269,7 +3269,7 @@ function ProductsList() {
                         </div>
 
                         {/* Price */}
-                        <div className="text-right flex-shrink-0 max-w-[120px]">
+                        <div className="text-right whitespace-nowrap">
                           {hasSale ? (
                             <div className="flex flex-col items-end">
                               <span className="font-bold text-[#1F2937]">
