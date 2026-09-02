@@ -3226,11 +3226,11 @@ function ProductsList() {
                     </div>
 
                     {/* Product Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0 flex-1">
+                    <div className="flex-1 min-w-0 overflow-hidden">
+                      <div className="grid grid-cols-[1fr_auto] gap-3 items-start">
+                        <div className="min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-semibold text-[#1F2937] text-base truncate block">
+                            <h3 className="font-semibold text-[#1F2937] text-base truncate">
                               {product.name}
                             </h3>
                             {product.ourProduct && (

@@ -1091,7 +1091,7 @@ export default function DashboardLayout() {
         </div>
 
         {/* Main content area */}
-        <main className="flex-1 overflow-y-auto bg-[#F3F7F6] p-4 lg:p-8">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden bg-[#F3F7F6] p-4 lg:p-8">
           <Outlet />
         </main>
       </div>
