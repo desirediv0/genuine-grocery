@@ -6,7 +6,7 @@ import {
   useRef,
   useMemo,
 } from "react";
-import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
+import { Link, useParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
   products,
   categories,
@@ -92,9 +92,11 @@ function useCategories() {
 export function ProductForm({
   mode,
   productId,
+  filterState = {},
 }: {
   mode: "create" | "edit";
   productId?: string;
+  filterState?: { page?: number; category?: string; search?: string };
 }) {
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -1238,7 +1240,7 @@ export function ProductForm({
             ? "Product created successfully"
             : "Product updated successfully"
         );
-        navigate("/products");
+        navigate("/products", { state: filterState });
       } else {
         toast.error(response.data.message || "Failed to save product");
       }
@@ -2397,7 +2399,7 @@ export function ProductForm({
             <Button
               type="button"
               variant="outline"
-              onClick={() => navigate("/products")}
+              onClick={() => navigate("/products", { state: filterState })}
             >
               {t("common.cancel")}
             </Button>
@@ -2644,14 +2646,15 @@ export default function ProductsPage() {
   const location = useLocation();
   const isNewProduct = location.pathname.includes("/new");
   const isEditProduct = !!id;
+  const filterState = (location.state as any) || {};
 
   // Show appropriate content based on route
   if (isNewProduct) {
-    return <ProductForm mode="create" />;
+    return <ProductForm mode="create" filterState={filterState} />;
   }
 
   if (isEditProduct) {
-    return <ProductForm mode="edit" productId={id} />;
+    return <ProductForm mode="edit" productId={id} filterState={filterState} />;
   }
 
   return <ProductsList />;
@@ -2660,14 +2663,32 @@ export default function ProductsPage() {
 // Product List Component
 function ProductsList() {
   const { t } = useLanguage();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+
+  // Read initial state from URL search params, fall back to location.state (for edit/create return)
+  const getInitialPage = () => {
+    const urlPage = searchParams.get("page");
+    if (urlPage) return parseInt(urlPage, 10) || 1;
+    const statePage = (location.state as any)?.page;
+    if (statePage) return parseInt(statePage, 10) || 1;
+    return 1;
+  };
+  const getInitialCategory = () => {
+    return searchParams.get("category") || (location.state as any)?.category || "";
+  };
+  const getInitialSearch = () => {
+    return searchParams.get("search") || (location.state as any)?.search || "";
+  };
+
   const [productsList, setProductsList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(getInitialSearch);
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(getInitialPage);
   const [totalPages, setTotalPages] = useState(1);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(getInitialCategory);
   const [categoriesList, setCategoriesList] = useState<any[]>([]);
 
   // States for delete dialog
@@ -2676,38 +2697,47 @@ function ProductsList() {
   const [productToDelete, setProductToDelete] = useState<string | null>(null);
   const [deletingProduct, setDeletingProduct] = useState(false);
 
-  // Fetch products
+  // Sync URL search params from state (for bookmarkable/shareable URLs & back button)
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setIsLoading(true);
-        const params = {
-          page: currentPage,
-          limit: 10,
-          ...(debouncedSearchQuery && { search: debouncedSearchQuery }),
-          ...(selectedCategory && { category: selectedCategory }),
-        };
+    const params: Record<string, string> = {};
+    if (currentPage > 1) params.page = currentPage.toString();
+    if (selectedCategory) params.category = selectedCategory;
+    if (debouncedSearchQuery) params.search = debouncedSearchQuery;
+    setSearchParams(params, { replace: true });
+  }, [currentPage, selectedCategory, debouncedSearchQuery, setSearchParams]);
 
-        const response = await products.getProducts(params);
+  // Fetch products
+  const fetchProducts = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const params = {
+        page: currentPage,
+        limit: 10,
+        ...(debouncedSearchQuery && { search: debouncedSearchQuery }),
+        ...(selectedCategory && { category: selectedCategory }),
+      };
 
-        if (response.data.success) {
-          const products = response.data.data?.products || [];
+      const response = await products.getProducts(params);
 
-          setProductsList(products);
-          setTotalPages(response.data.data?.pagination?.pages || 1);
-        } else {
-          setError(response.data.message || "Failed to fetch products");
-        }
-      } catch (error: any) {
-        console.error("Error fetching products:", error);
-        setError("Failed to load products. Please try again.");
-      } finally {
-        setIsLoading(false);
+      if (response.data.success) {
+        const products = response.data.data?.products || [];
+
+        setProductsList(products);
+        setTotalPages(response.data.data?.pagination?.pages || 1);
+      } else {
+        setError(response.data.message || "Failed to fetch products");
       }
-    };
-
-    fetchProducts();
+    } catch (error: any) {
+      console.error("Error fetching products:", error);
+      setError("Failed to load products. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   }, [currentPage, debouncedSearchQuery, selectedCategory]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   // Fetch categories for filter
   useEffect(() => {
@@ -2782,6 +2812,13 @@ function ProductsList() {
     e.preventDefault();
     setCurrentPage(1);
   };
+
+  // Build URL state for preserving filters across navigation
+  const getFilterState = useCallback(() => ({
+    page: currentPage,
+    category: selectedCategory,
+    search: debouncedSearchQuery,
+  }), [currentPage, selectedCategory, debouncedSearchQuery]);
 
   // Handle product deletion
   const handleDeleteProduct = async (
@@ -3053,7 +3090,7 @@ function ProductsList() {
             <Button
               asChild
             >
-              <Link to="/products/new">
+              <Link to="/products/new" state={getFilterState()}>
                 <Plus className="mr-2 h-4 w-4" />
                 {t("products.add_new")}
               </Link>
@@ -3125,7 +3162,7 @@ function ProductsList() {
             <Button
               asChild
             >
-              <Link to="/products/new">
+              <Link to="/products/new" state={getFilterState()}>
                 <Plus className="mr-2 h-4 w-4" />
                 {t("products.add_new")}
               </Link>
@@ -3291,7 +3328,7 @@ function ProductsList() {
                             className="text-[#1F2937] hover:bg-[#F3F7F6]"
                             asChild
                           >
-                            <Link to={`/products/${product.id}`}>
+                            <Link to={`/products/${product.id}`} state={getFilterState()}>
                               <Edit className="h-4 w-4 mr-2" />
                               Edit
                             </Link>
