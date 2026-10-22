@@ -1471,7 +1471,7 @@ export function ProductForm({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" asChild>
-            <Link to="/products">
+            <Link to="/products" state={filterState}>
               <ChevronLeft className="h-4 w-4" />
               Back
             </Link>

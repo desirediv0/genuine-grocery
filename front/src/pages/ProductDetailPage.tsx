@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import { products } from "@/api/adminService";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +28,8 @@ export default function ProductDetailPage() {
   const { t } = useLanguage();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnToListState = location.state;
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -185,7 +187,7 @@ export default function ProductDetailPage() {
 
   // Handle edit navigation
   const handleEditProduct = () => {
-    navigate(`/products/edit/${id}`);
+    navigate(`/products/edit/${id}`, { state: returnToListState });
   };
 
   // Add a helper function to determine if it's a simple product (before the component)
@@ -240,7 +242,7 @@ export default function ProductDetailPage() {
           {t("products.details.not_found_desc") || "The product you're looking for doesn't exist or has been removed."}
         </p>
         <Button variant="outline" className="mt-4" asChild>
-          <Link to="/products">
+          <Link to="/products" state={returnToListState}>
             <ChevronLeft className="mr-2 h-4 w-4" />
             {t("products.details.actions.back")}
           </Link>
@@ -288,7 +290,7 @@ export default function ProductDetailPage() {
       <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="icon" asChild>
-            <Link to="/products">
+            <Link to="/products" state={returnToListState}>
               <ChevronLeft className="h-4 w-4" />
             </Link>
           </Button>
